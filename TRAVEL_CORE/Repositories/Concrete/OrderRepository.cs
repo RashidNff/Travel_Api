@@ -24,7 +24,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
 
         public int SaveOrder(SaveOrder order)
         {
-            int generatedOrderId = 0, generatedAirId = 0, generatedHotelId =0;
+            int generatedOrderId = 0;
             List<SqlParameter> orderParameters = new List<SqlParameter>
                 {
                     new SqlParameter("OrderNo", order.OrderNo),
@@ -37,23 +37,22 @@ namespace TRAVEL_CORE.Repositories.Concrete
 
             if (order.Id != 0)
             {
-
+                generatedOrderId = connection.Execute(tableName: "OPR.Orders", operation: OperationType.Update, fieldName: "Id", ID: order.Id, parameters: orderParameters);
             }
             else
             {
                 generatedOrderId = connection.Execute(tableName: "OPR.Orders", operation: OperationType.Insert, parameters: orderParameters);
+            }
 
-                if (order.AirwayData != null)
-                {
-                    order.AirwayData.OrderId = generatedOrderId;
-                    generatedAirId = SaveAirwayData(order.AirwayData);
-                }
-                if (order.HotelData != null)
-                {
-                    order.HotelData.OrderId = generatedOrderId;
-                    generatedHotelId = SaveHotelData(order.HotelData);
-                }
-
+            if (order.AirwayData != null)
+            {
+                order.AirwayData.OrderId = generatedOrderId;
+                SaveAirwayData(order.AirwayData);
+            }
+            if (order.HotelData != null)
+            {
+                order.HotelData.OrderId = generatedOrderId;
+                SaveHotelData(order.HotelData);
             }
 
 
@@ -61,9 +60,9 @@ namespace TRAVEL_CORE.Repositories.Concrete
         }
 
 
-        private int SaveAirwayData(Airway airwayModel)
+        private void SaveAirwayData(Airway airwayModel)
         {
-            int id = 0, generatedPersonId =0;
+            int id = 0, generatedPersonId = 0;
             List<SqlParameter> airwayParameters = new List<SqlParameter>
                 {
                     new SqlParameter("OrderId", airwayModel.OrderId),
@@ -84,38 +83,43 @@ namespace TRAVEL_CORE.Repositories.Concrete
             else
             {
                 id = connection.Execute(tableName: "OPR.Airways", operation: OperationType.Insert, parameters: airwayParameters);
-
-                if (airwayModel.PersonDetails != null)
-                {
-                    generatedPersonId = SavePersonDetails(airwayModel.PersonDetails, id);
-                }
             }
-                
-            return id;
+
+            if (airwayModel.PersonDetails != null)
+            {
+                generatedPersonId = SavePersonDetails(airwayModel.PersonDetails, id);
+            }
         }
 
 
-        private int SaveHotelData(Hotel model)
+        private void SaveHotelData(Hotel hotelModel)
         {
-            int id = 0;
+            int id = 0, generatedPersonId = 0;
             List<SqlParameter> hotelParameters = new List<SqlParameter>
             {
-                    new SqlParameter("OrderId", model.OrderId),
-                    new SqlParameter("HotelName", model.HotelName),
-                    new SqlParameter("EnrtyDate", model.EnrtyDate),
-                    new SqlParameter("ExitDate", model.ExitDate),
-                    new SqlParameter("GuestCount", model.GuestCount),
-                    new SqlParameter("RoomClassId", model.RoomClassId),
-                    new SqlParameter("Bron", model.Bron),
-                    new SqlParameter("BronExpiryDate", model.BronExpiryDate)
+                    new SqlParameter("OrderId", hotelModel.OrderId),
+                    new SqlParameter("HotelName", hotelModel.HotelName),
+                    new SqlParameter("EnrtyDate", hotelModel.EnrtyDate),
+                    new SqlParameter("ExitDate", hotelModel.ExitDate),
+                    new SqlParameter("GuestCount", hotelModel.GuestCount),
+                    new SqlParameter("RoomClassId", hotelModel.RoomClassId),
+                    new SqlParameter("Bron", hotelModel.Bron),
+                    new SqlParameter("BronExpiryDate", hotelModel.BronExpiryDate)
             };
 
-            if (model.id == 0)
-                id = connection.Execute(tableName: "OPR.Hotels", operation: OperationType.Insert, parameters: hotelParameters);
+            if (hotelModel.Id != 0)
+            {
+                id = connection.Execute(tableName: "OPR.Hotels", operation: OperationType.Update, fieldName: "Id", ID: hotelModel.Id, parameters: hotelParameters);
+            }
             else
-                id = connection.Execute(tableName: "OPR.Hotels", operation: OperationType.Update, fieldName: "Id", ID: model.Id, parameters: hotelParameters);
+            {
+                id = connection.Execute(tableName: "OPR.Hotels", operation: OperationType.Insert, parameters: hotelParameters);
+            }
 
-            return id;
+            if (hotelModel.PersonDetails != null)
+            {
+                generatedPersonId = SavePersonDetails(hotelModel.PersonDetails, id);
+            }
         }
         private int SavePersonDetails(List<PersonDetails>? personDetails, int operationId)
         {
@@ -144,12 +148,13 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 else
                 {
                     id = connection.Execute(tableName: "CRD.PersonDetails", operation: OperationType.Insert, parameters: personParameters);
-
-                    if (personDetail.AdditionalServices != null)
-                        SaveAdditionalServices(personDetail.AdditionalServices, id);
-                    if (personDetail.SpecialServices != null)
-                        SaveSpecialServices(personDetail.SpecialServices, id);
                 }
+
+                if (personDetail.AdditionalServices != null)
+                    SaveAdditionalServices(personDetail.AdditionalServices, id);
+                if (personDetail.SpecialServices != null)
+                    SaveSpecialServices(personDetail.SpecialServices, id);
+
             }
             
             return id;
