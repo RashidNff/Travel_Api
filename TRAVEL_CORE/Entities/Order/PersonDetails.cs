@@ -3,8 +3,8 @@
     public class PersonDetails
     {
         public int Id { get; set; }
+        public short OperationId { get; set; }
         public int PersonAgeCategory { get; set; }
-        public short Operationİd { get; set; }
         public string? Name { get; set; }
         public string? Surname { get; set; }
         public short Gender { get; set; }

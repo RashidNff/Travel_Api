@@ -33,10 +33,9 @@ namespace TRAVEL_CORE.Repositories.Concrete
                     new SqlParameter("Phone", order.Phone),
                     new SqlParameter("Email", order.Email)
                 };
-
             
 
-            if (order.Id == 0)
+            if (order.Id != 0)
             {
 
             }
@@ -46,10 +45,12 @@ namespace TRAVEL_CORE.Repositories.Concrete
 
                 if (order.AirwayData != null)
                 {
+                    order.AirwayData.OrderId = generatedOrderId;
                     generatedAirId = SaveAirwayData(order.AirwayData);
                 }
                 if (order.HotelData != null)
                 {
+                    order.HotelData.OrderId = generatedOrderId;
                     generatedHotelId = SaveHotelData(order.HotelData);
                 }
 
@@ -60,29 +61,40 @@ namespace TRAVEL_CORE.Repositories.Concrete
         }
 
 
-        private int SaveAirwayData(Airway model)
+        private int SaveAirwayData(Airway airwayModel)
         {
-            int id = 0;
+            int id = 0, generatedPersonId =0;
             List<SqlParameter> airwayParameters = new List<SqlParameter>
                 {
-                    new SqlParameter("OrderId", model.OrderId),
-                    new SqlParameter("FromPoint", model.FromPoint),
-                    new SqlParameter("ToPoint", model.ToPoint),
-                    new SqlParameter("DepartureDate", model.DepartureDate),
-                    new SqlParameter("ReturnDate", model.ReturnDate),
-                    new SqlParameter("FlightClassId", model.FlightClassId),
-                    new SqlParameter("PassengersCount", model.PassengersCount),
-                    new SqlParameter("Bron", model.Bron),
-                    new SqlParameter("BronExpiryDate", model.BronExpiryDate)
+                    new SqlParameter("OrderId", airwayModel.OrderId),
+                    new SqlParameter("FromPoint", airwayModel.FromPoint),
+                    new SqlParameter("ToPoint", airwayModel.ToPoint),
+                    new SqlParameter("DepartureDate", airwayModel.DepartureDate),
+                    new SqlParameter("ReturnDate", airwayModel.ReturnDate),
+                    new SqlParameter("FlightClassId", airwayModel.FlightClassId),
+                    new SqlParameter("PassengersCount", airwayModel.PassengersCount),
+                    new SqlParameter("Bron", airwayModel.Bron),
+                    new SqlParameter("BronExpiryDate", airwayModel.BronExpiryDate)
                 };
 
-            if (model.OrderId == 0)
-                id = connection.Execute(tableName: "OPR.Airways", operation: OperationType.Insert, parameters: airwayParameters);
+            if (airwayModel.Id != 0)
+            {
+                id = connection.Execute(tableName: "OPR.Airways", operation: OperationType.Update, fieldName: "Id", ID: airwayModel.Id, parameters: airwayParameters);
+            }
             else
-                id = connection.Execute(tableName: "OPR.Hotels", operation: OperationType.Update, fieldName: "Id", ID: model.Id, parameters: airwayParameters);
+            {
+                id = connection.Execute(tableName: "OPR.Airways", operation: OperationType.Insert, parameters: airwayParameters);
 
-                return id;
+                if (airwayModel.PersonDetails != null)
+                {
+                    generatedPersonId = SavePersonDetails(airwayModel.PersonDetails, id);
+                }
+            }
+                
+            return id;
         }
+
+
         private int SaveHotelData(Hotel model)
         {
             int id = 0;
@@ -98,12 +110,87 @@ namespace TRAVEL_CORE.Repositories.Concrete
                     new SqlParameter("BronExpiryDate", model.BronExpiryDate)
             };
 
-            if (model.OrderId == 0)
+            if (model.id == 0)
                 id = connection.Execute(tableName: "OPR.Hotels", operation: OperationType.Insert, parameters: hotelParameters);
             else
                 id = connection.Execute(tableName: "OPR.Hotels", operation: OperationType.Update, fieldName: "Id", ID: model.Id, parameters: hotelParameters);
 
             return id;
+        }
+        private int SavePersonDetails(List<PersonDetails>? personDetails, int operationId)
+        {
+            int id = 0;
+            foreach (var personDetail in personDetails)
+            {
+                List<SqlParameter> personParameters = new List<SqlParameter>
+                {
+                    new SqlParameter("OperationId", operationId),
+                    new SqlParameter("PersonAgeCategory", personDetail.PersonAgeCategory),
+                    new SqlParameter("Name", personDetail.Name),
+                    new SqlParameter("Surname", personDetail.Surname),
+                    new SqlParameter("Gender", personDetail.Gender),
+                    new SqlParameter("BirthDate", personDetail.BirthDate),
+                    new SqlParameter("DocType", personDetail.DocType),
+                    new SqlParameter("DocNumber", personDetail.DocNumber),
+                    new SqlParameter("DocIssueCountry", personDetail.DocIssueCountry),
+                    new SqlParameter("DocExpireDate", personDetail.DocExpireDate),
+                    new SqlParameter("DocScan", personDetail.DocScan)
+                };
+
+                if (personDetail.Id != 0)
+                {
+                    id = connection.Execute(tableName: "CRD.PersonDetails", operation: OperationType.Update, fieldName: "Id", ID: personDetail.Id, parameters: personParameters);
+                }
+                else
+                {
+                    id = connection.Execute(tableName: "CRD.PersonDetails", operation: OperationType.Insert, parameters: personParameters);
+
+                    if (personDetail.AdditionalServices != null)
+                        SaveAdditionalServices(personDetail.AdditionalServices, id);
+                    if (personDetail.SpecialServices != null)
+                        SaveSpecialServices(personDetail.SpecialServices, id);
+                }
+            }
+            
+            return id;
+        }
+
+        private void SaveSpecialServices(List<SpecialServices>? specialServices, int personId)
+        {
+            foreach (var specialService in specialServices)
+            {
+                List<SqlParameter> specialParameters = new List<SqlParameter>
+                {
+                    new SqlParameter("PersonId", personId),
+                    new SqlParameter("ServiciesId", specialService.ServiciesId),
+                    new SqlParameter("Type", specialService.Type)
+                };
+
+                if (specialService.Id != 0)
+                    connection.Execute(tableName: "CRD.SpecialServices", operation: OperationType.Update, fieldName: "Id", ID: specialService.Id, parameters: specialParameters);
+                else
+                    connection.Execute(tableName: "CRD.SpecialServices", operation: OperationType.Insert, parameters: specialParameters);
+            }
+        }
+
+        private void SaveAdditionalServices(List<AdditionalServices>? additionalServices, int personId)
+        {
+            foreach (var additionalService in additionalServices)
+            {
+                List<SqlParameter> additionalParameters = new List<SqlParameter>
+                {
+                    new SqlParameter("PersonId", personId),
+                    new SqlParameter("OperationType", additionalService.OperationType),
+                    new SqlParameter("AdditionalId", additionalService.AdditionalId),
+                    new SqlParameter("DepartureService", additionalService.DepartureService),
+                    new SqlParameter("ReturnService", additionalService.ReturnService)
+                };
+
+                if (additionalService.Id != 0)
+                    connection.Execute(tableName: "CRD.AdditionalServices", operation: OperationType.Update, fieldName: "Id", ID: additionalService.Id, parameters: additionalParameters);
+                else
+                    connection.Execute(tableName: "CRD.AdditionalServices", operation: OperationType.Insert, parameters: additionalParameters);
+            }
         }
     }
 }
