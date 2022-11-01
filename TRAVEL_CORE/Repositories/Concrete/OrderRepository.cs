@@ -192,7 +192,6 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 {
                     new SqlParameter("PersonId", personId),
                     new SqlParameter("ServiciesId", specialService.ServiciesId),
-                    new SqlParameter("Type", specialService.Type)
                 };
 
                 if (specialService.Id != 0)
@@ -309,7 +308,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 airwayInfo.BronExpiryDate = Convert.ToDateTime(readerAir["BronExpiryDate"].ToString());
 
                 List<PersonDetailsById> personList = new();
-                GetPersonDataById(personList, airwayInfo.Id);
+                GetPersonDataById(personList, airwayInfo.Id, OrderOperationType.Airway);
 
                 airwayInfo.PersonDetails = personList;
             }
@@ -323,7 +322,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 hotelInfo.Id = Convert.ToInt32(readerHotel["Id"]);
                 hotelInfo.OrderId = Convert.ToInt32(readerHotel["OrderId"].ToString());
                 hotelInfo.HotelName = readerHotel["HotelName"].ToString();
-                hotelInfo.EnrtyDate = Convert.ToDateTime(readerHotel["EnrtyDate"].ToString());
+                hotelInfo.EnrtyDate = Convert.ToDateTime(readerHotel["EntryDate"].ToString());
                 hotelInfo.ExitDate = Convert.ToDateTime(readerHotel["ExitDate"].ToString());
                 hotelInfo.GuestCount = Convert.ToInt32(readerHotel["GuestCount"].ToString());
                 hotelInfo.RoomClassId = Convert.ToInt32(readerHotel["RoomClassId"].ToString());
@@ -331,7 +330,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 hotelInfo.BronExpiryDate = Convert.ToDateTime(readerHotel["BronExpiryDate"].ToString());
 
                 List<PersonDetailsById> personList = new();
-                GetPersonDataById(personList, hotelInfo.Id);
+                GetPersonDataById(personList, hotelInfo.Id, OrderOperationType.Hotel);
 
                 hotelInfo.PersonDetails = personList;
             }
@@ -347,11 +346,11 @@ namespace TRAVEL_CORE.Repositories.Concrete
             return orderInfo;
         }
 
-        private void GetPersonDataById(List<PersonDetailsById> personList, int Id)
+        private void GetPersonDataById(List<PersonDetailsById> personList, int Id, OrderOperationType orderOperationType)
         {
             List<SqlParameter> personParameters = new List<SqlParameter>();
             personParameters.Add(new SqlParameter("OperationId", Id));
-            personParameters.Add(new SqlParameter("OperationType", (int)OrderOperationType.Airway));
+            personParameters.Add(new SqlParameter("OperationType", (int)orderOperationType));
 
 
             var readerPerson = connection.RunQuery(commandText: "CRD.SP_GetPersonByOperationId", parameters: personParameters, commandType: CommandType.StoredProcedure);
