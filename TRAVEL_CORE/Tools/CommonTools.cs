@@ -13,7 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Data.SqlClient;
 using System.Net.Mail;
 
-namespace TMTM2_Web_Api.Tools
+namespace TRAVEL_CORE.Tools
 {
     public class CommonTools
     {

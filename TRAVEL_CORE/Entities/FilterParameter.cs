@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace TMTM2_Web_Api.Entities
+namespace TRAVEL_CORE.Entities
 {
     public class FilterParameter
     {

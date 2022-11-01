@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using TMTM2_Web_Api.Entities;
-using TMTM2_Web_Api.Tools;
+using TRAVEL_CORE.Entities;
+using TRAVEL_CORE.Tools;
 using TRAVEL_CORE.Entities.Order;
 using TRAVEL_CORE.Repositories.Abstract;
 
@@ -13,11 +13,11 @@ namespace TRAVEL_CORE.Controllers
     [Route("api/[controller]/[action]")]
     public class OrderController : ControllerBase
     {
-        private readonly IOrderRepository _airRepository;
+        private readonly IOrderRepository _orderRepository;
 
-        public OrderController(IOrderRepository airRepository)
+        public OrderController(IOrderRepository orderRepository)
         {
-            _airRepository = airRepository;
+            _orderRepository = orderRepository;
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace TRAVEL_CORE.Controllers
         {
             try
             {
-                return Ok(JsonConvert.SerializeObject(_airRepository.GetAirBrowseData(filterParameter)));
+                return Ok(JsonConvert.SerializeObject(_orderRepository.GetAirBrowseData(filterParameter)));
             }
             catch (Exception)
             {
@@ -39,6 +39,7 @@ namespace TRAVEL_CORE.Controllers
         }
 
 
+        [AllowAnonymous]
         [HttpPost]
         public IActionResult SaveOrder(SaveOrder order)
         {
@@ -48,7 +49,7 @@ namespace TRAVEL_CORE.Controllers
 
             try
             {
-                orderId = _airRepository.SaveOrder(order);
+                orderId = _orderRepository.SaveOrder(order);
             }
             catch (Exception)
             {
@@ -57,6 +58,21 @@ namespace TRAVEL_CORE.Controllers
 
             return Ok(new { orderId = orderId });
         }
+
+        //[AllowAnonymous]
+        //[HttpGet("GetShipInfoByOperation")]
+        //public IActionResult GetShipInfoByOperation(int operationId)
+        //{
+        //    try
+        //    {
+        //        return Ok(_routeOperationRepository.GetShipInfoByOperation(operationId));
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return BadRequest(new { message = "Unexpected error occurred!" });
+        //    }
+        //}
+
 
     }
 }

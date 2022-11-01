@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TMTM2_Web_Api.Tools;
+using TRAVEL_CORE.Tools;
 using TRAVEL_CORE.Entities.Login;
 using TRAVEL_CORE.Repositories.Abstract;
 

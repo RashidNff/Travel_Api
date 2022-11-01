@@ -1,7 +1,7 @@
 ﻿using Microsoft.OpenApi.Models;
 using System.Data.SqlClient;
 using System.Data;
-using TMTM2_Web_Api.Tools;
+using TRAVEL_CORE.Tools;
 
 namespace TRAVEL_CORE.DAL
 {

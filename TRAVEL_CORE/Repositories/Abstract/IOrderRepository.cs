@@ -1,5 +1,5 @@
 ﻿using System.Data;
-using TMTM2_Web_Api.Entities;
+using TRAVEL_CORE.Entities;
 using TRAVEL_CORE.Entities.Order;
 
 namespace TRAVEL_CORE.Repositories.Abstract

@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text;
+using TRAVEL_CORE.Controllers;
 using TRAVEL_CORE.Repositories.Abstract;
 using TRAVEL_CORE.Repositories.Concrete;
 
@@ -24,6 +25,7 @@ builder.Services.AddCors();
 builder.Services.AddControllers();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<ICommonRepository, CommonRepository>();
 
 
 builder.Services.AddSwaggerGen(opt =>

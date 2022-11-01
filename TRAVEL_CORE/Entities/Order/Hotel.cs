@@ -12,5 +12,7 @@
         public byte Bron { get; set; }
         public DateTime BronExpiryDate { get; set; }
         public List<PersonDetails>? PersonDetails { get; set; }
+        public List<int>? DeletedPersonDetailIds { get; set; }
+
     }
 }
