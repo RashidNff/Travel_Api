@@ -11,6 +11,7 @@ using TRAVEL_CORE.Enums;
 using System.Linq;
 using TRAVEL_CORE.Entities.Order.GetById;
 using Newtonsoft.Json;
+using TRAVEL_CORE.Entities;
 
 namespace TRAVEL_CORE.Repositories.Concrete
 {
@@ -105,7 +106,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             {
                     new SqlParameter("OrderId", hotelModel.OrderId),
                     new SqlParameter("HotelName", hotelModel.HotelName),
-                    new SqlParameter("EnrtyDate", hotelModel.EnrtyDate),
+                    new SqlParameter("EntryDate", hotelModel.EnrtyDate),
                     new SqlParameter("ExitDate", hotelModel.ExitDate),
                     new SqlParameter("GuestCount", hotelModel.GuestCount),
                     new SqlParameter("RoomClassId", hotelModel.RoomClassId),
@@ -276,6 +277,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
         {
             OrderInfo orderInfo = new();
             AirwayById airwayInfo = new();
+            HotelById hotelInfo = new();
             
             List<SqlParameter> parameters = new List<SqlParameter>();
             parameters.Add(new SqlParameter("OrderId", ordId));
@@ -291,6 +293,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             }
             reader.Close();
 
+            ////////////AirwayData
             var readerAir = connection.RunQuery(commandText: "CRD.SP_GetAirwayByOrderId", parameters: parameters, commandType: CommandType.StoredProcedure);
             if (readerAir.Read())
             {
@@ -305,47 +308,80 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 airwayInfo.Bron = Convert.ToByte(readerAir["PassengersCount"].ToString());
                 airwayInfo.BronExpiryDate = Convert.ToDateTime(readerAir["BronExpiryDate"].ToString());
 
+                List<PersonDetailsById> personList = new();
+                GetPersonDataById(personList, airwayInfo.Id);
 
-                List<SqlParameter> personParameters = new List<SqlParameter>();
-                personParameters.Add(new SqlParameter("OperationId", airwayInfo.Id));
-                personParameters.Add(new SqlParameter("OperationType", (int)OrderOperationType.Airway));
-
-                var readerPerson = connection.RunQuery(commandText: "CRD.SP_GetPersonByOperationId", parameters: personParameters, commandType: CommandType.StoredProcedure);
-
-                while (readerPerson.Read())
-                {
-                    PersonDetailsById personDetailsById = new ();
-                    personDetailsById.Id = Convert.ToInt32(readerPerson["Id"]);
-                    personDetailsById.PersonAgeCategory = Convert.ToInt32(readerPerson["PersonAgeCategory"].ToString());
-                    personDetailsById.Name = readerPerson["Name"].ToString();
-                    personDetailsById.Surname = readerPerson["Surname"].ToString();
-                    personDetailsById.Gender = Convert.ToInt16(readerPerson["Gender"].ToString());
-                    personDetailsById.BirthDate = Convert.ToDateTime(readerPerson["BirthDate"].ToString());
-                    personDetailsById.DocType = Convert.ToInt32(readerPerson["DocType"].ToString());
-                    personDetailsById.Surname = readerPerson["DocNumber"].ToString();
-                    personDetailsById.DocIssueCountry = readerPerson["DocIssueCountry"].ToString();
-                    personDetailsById.DocExpireDate = Convert.ToDateTime(readerPerson["DocExpireDate"].ToString());
-                    personDetailsById.DocScan = readerPerson["DocScan"].ToString();
-
-
-                    List<SqlParameter> additionalParameters = new List<SqlParameter>();
-                    additionalParameters.Add(new SqlParameter("PersonId", personDetailsById.Id));
-
-                    var additionallines = connection.GetData(commandText: "CRD.SP_GetAdditionalServicesByPersonId", parameters: additionalParameters, commandType: CommandType.StoredProcedure);
-                    personDetailsById.AdditionalServices = JsonConvert.DeserializeObject<List<AdditionalServiceById>>(JsonConvert.SerializeObject(additionallines));
-
-                    airwayInfo.PersonDetails.Add(personDetailsById);
-                }
-                
-
+                airwayInfo.PersonDetails = personList;
             }
             readerAir.Close();
 
-            orderInfo.AirwayData = airwayInfo;
+            ////////////HotelData
+            var readerHotel = connection.RunQuery(commandText: "CRD.SP_GetHotelByOrderId", parameters: parameters, commandType: CommandType.StoredProcedure);
 
-            //var lines = connection.GetData(commandText: "SP_GETLINESBYSHIPNAME", parameters: parameters, commandType: CommandType.StoredProcedure);
+            if (readerHotel.Read())
+            {
+                hotelInfo.Id = Convert.ToInt32(readerHotel["Id"]);
+                hotelInfo.OrderId = Convert.ToInt32(readerHotel["OrderId"].ToString());
+                hotelInfo.HotelName = readerHotel["HotelName"].ToString();
+                hotelInfo.EnrtyDate = Convert.ToDateTime(readerHotel["EnrtyDate"].ToString());
+                hotelInfo.ExitDate = Convert.ToDateTime(readerHotel["ExitDate"].ToString());
+                hotelInfo.GuestCount = Convert.ToInt32(readerHotel["GuestCount"].ToString());
+                hotelInfo.RoomClassId = Convert.ToInt32(readerHotel["RoomClassId"].ToString());
+                hotelInfo.Bron = Convert.ToBoolean(readerHotel["Bron"].ToString());
+                hotelInfo.BronExpiryDate = Convert.ToDateTime(readerHotel["BronExpiryDate"].ToString());
+
+                List<PersonDetailsById> personList = new();
+                GetPersonDataById(personList, hotelInfo.Id);
+
+                hotelInfo.PersonDetails = personList;
+            }
+            readerHotel.Close();
+
+            orderInfo.AirwayData = airwayInfo;
+            orderInfo.HotelData = hotelInfo;
+
+            ////////////CostData
+            var costLines = connection.GetData(commandText: "CRD.SP_GetCostByOrderId", parameters: parameters, commandType: CommandType.StoredProcedure);
+            orderInfo.CostData = JsonConvert.DeserializeObject<List<ServicesCost>>(JsonConvert.SerializeObject(costLines));
 
             return orderInfo;
+        }
+
+        private void GetPersonDataById(List<PersonDetailsById> personList, int Id)
+        {
+            List<SqlParameter> personParameters = new List<SqlParameter>();
+            personParameters.Add(new SqlParameter("OperationId", Id));
+            personParameters.Add(new SqlParameter("OperationType", (int)OrderOperationType.Airway));
+
+
+            var readerPerson = connection.RunQuery(commandText: "CRD.SP_GetPersonByOperationId", parameters: personParameters, commandType: CommandType.StoredProcedure);
+
+            while (readerPerson.Read())
+            {
+                PersonDetailsById personDetailsById = new();
+                personDetailsById.Id = Convert.ToInt32(readerPerson["Id"]);
+                personDetailsById.PersonAgeCategory = Convert.ToInt32(readerPerson["PersonAgeCategory"].ToString());
+                personDetailsById.Name = readerPerson["Name"].ToString();
+                personDetailsById.Surname = readerPerson["Surname"].ToString();
+                personDetailsById.Gender = Convert.ToInt16(readerPerson["Gender"].ToString());
+                personDetailsById.BirthDate = Convert.ToDateTime(readerPerson["BirthDate"].ToString());
+                personDetailsById.DocType = Convert.ToInt32(readerPerson["DocType"].ToString());
+                personDetailsById.Surname = readerPerson["DocNumber"].ToString();
+                personDetailsById.DocIssueCountry = readerPerson["DocIssueCountry"].ToString();
+                personDetailsById.DocExpireDate = Convert.ToDateTime(readerPerson["DocExpireDate"].ToString());
+                personDetailsById.DocScan = readerPerson["DocScan"].ToString();
+            
+                List<SqlParameter> additionalAndSpecial = new List<SqlParameter>();
+                additionalAndSpecial.Add(new SqlParameter("PersonId", personDetailsById.Id));
+
+                var additionallines = connection.GetData(commandText: "CRD.SP_GetAdditionalServicesByPersonId", parameters: additionalAndSpecial, commandType: CommandType.StoredProcedure);
+                personDetailsById.AdditionalServices = JsonConvert.DeserializeObject<List<AdditionalServices>>(JsonConvert.SerializeObject(additionallines));
+
+                var speciallines = connection.GetData(commandText: "CRD.SP_GetSpecialServicesByPersonId", parameters: additionalAndSpecial, commandType: CommandType.StoredProcedure);
+                personDetailsById.SpecialServices = JsonConvert.DeserializeObject<List<SpecialServices>>(JsonConvert.SerializeObject(speciallines));
+
+                personList.Add(personDetailsById);
+            }
         }
     }
 }

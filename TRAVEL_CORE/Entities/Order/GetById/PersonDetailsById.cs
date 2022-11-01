@@ -13,7 +13,7 @@
         public string? DocIssueCountry { get; set; }
         public DateTime DocExpireDate { get; set; }
         public string? DocScan { get; set; }
-        public List<AdditionalServiceById>? AdditionalServices { get; set; }
+        public List<AdditionalServices>? AdditionalServices { get; set; }
         public List<SpecialServices>? SpecialServices { get; set; }
     }
 }

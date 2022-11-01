@@ -10,7 +10,7 @@
         public string? Phone { get; set; }
         public string? Email { get; set; }
         public AirwayById? AirwayData { get; set; }
-        public Hotel? HotelData { get; set; }
+        public HotelById? HotelData { get; set; }
         public List<ServicesCost>? CostData { get; set; }
     }
 }
