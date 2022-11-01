@@ -8,6 +8,7 @@ using TRAVEL_CORE.DAL;
 using TRAVEL_CORE.Entities.Order;
 using TRAVEL_CORE.Repositories.Abstract;
 using TRAVEL_CORE.Enums;
+using System.Linq;
 
 namespace TRAVEL_CORE.Repositories.Concrete
 {
@@ -30,6 +31,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             List<SqlParameter> orderParameters = new List<SqlParameter>
                 {
                     new SqlParameter("OrderNo", order.OrderNo),
+                    new SqlParameter("OrderType", order.OrderType),
                     new SqlParameter("Orderdate", order.Orderdate),
                     new SqlParameter("FullName", order.FullName),
                     new SqlParameter("Phone", order.Phone),
@@ -50,6 +52,11 @@ namespace TRAVEL_CORE.Repositories.Concrete
             {
                 order.HotelData.OrderId = generatedOrderId;
                 SaveHotelData(order.HotelData);
+            }            
+            
+            if (order.CostData != null)
+            {
+                SaveCostData(order.CostData, generatedOrderId);
             }
 
 
@@ -237,6 +244,31 @@ namespace TRAVEL_CORE.Repositories.Concrete
             }
         }
 
+        private void SaveCostData(List<ServicesCost> costData, int orderId)
+        {
+            connection.Execute(tableName: "OPR.ServicesCost", operation: OperationType.Delete, fieldName: "OrderId", ID: orderId);
+
+            foreach (var cost in costData)
+            {
+                List<SqlParameter> costParameters = new List<SqlParameter>
+                {
+                    new SqlParameter("OrderId", cost.OrderId),
+                    new SqlParameter("Vender", cost.Vender),
+                    new SqlParameter("VenderService", cost.VenderService),
+                    new SqlParameter("Qty", cost.Qty),
+                    new SqlParameter("VenderUnitPrice", cost.VenderUnitPrice),
+                    new SqlParameter("VenderAmount", cost.VenderAmount),
+                    new SqlParameter("SaleUnitPrice", cost.SaleUnitPrice),
+                    new SqlParameter("SaleAmount", cost.SaleAmount),
+                    new SqlParameter("VAT", cost.VAT),
+                    new SqlParameter("Currency", cost.Currency),
+                    new SqlParameter("CurrencyAmount", cost.CurrencyAmount)
+                };
+
+                connection.Execute(tableName: "OPR.ServicesCost", operation: OperationType.Insert, parameters: costParameters);
+            }
+            
+        }
 
 
     }

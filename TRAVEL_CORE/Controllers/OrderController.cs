@@ -59,19 +59,19 @@ namespace TRAVEL_CORE.Controllers
             return Ok(new { orderId = orderId });
         }
 
-        //[AllowAnonymous]
-        //[HttpGet("GetShipInfoByOperation")]
-        //public IActionResult GetShipInfoByOperation(int operationId)
-        //{
-        //    try
-        //    {
-        //        return Ok(_routeOperationRepository.GetShipInfoByOperation(operationId));
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return BadRequest(new { message = "Unexpected error occurred!" });
-        //    }
-        //}
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult GetOrderById(int orderId)
+        {
+            try
+            {
+                return Ok(_orderRepository.GetOrderById(orderId));
+            }
+            catch (Exception)
+            {
+                return BadRequest(new { message = "Unexpected error occurred!" });
+            }
+        }
 
 
     }

@@ -1,12 +1,10 @@
-﻿using System;
-
-namespace TRAVEL_CORE.Entities.Order
+﻿namespace TRAVEL_CORE.Entities.Order
 {
-    public class SaveOrder
+    public class OrderInfo
     {
         public int Id { get; set; }
         public string? OrderNo { get; set; }
-        public int? OrderType { get; set; }
+        public short OrderType { get; set; }
         public DateTime Orderdate { get; set; }
         public string? FullName { get; set; }
         public string? Phone { get; set; }

@@ -7,6 +7,7 @@ namespace TRAVEL_CORE.Repositories.Abstract
     public interface IOrderRepository
     {
         DataTable GetAirBrowseData(FilterParameter filterParameter);
+        OrderInfo GetOrderById(FilterParameter filterParameter);
         int SaveOrder(SaveOrder order);
 
     }
