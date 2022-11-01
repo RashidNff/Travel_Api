@@ -1,4 +1,4 @@
-﻿namespace TRAVEL_CORE.Entities.Order
+﻿namespace TRAVEL_CORE.Entities.Order.GetById
 {
     public class OrderInfo
     {
@@ -9,8 +9,7 @@
         public string? FullName { get; set; }
         public string? Phone { get; set; }
         public string? Email { get; set; }
-        public int CreatedBy { get; set; }
-        public Airway? AirwayData { get; set; }
+        public AirwayById? AirwayData { get; set; }
         public Hotel? HotelData { get; set; }
         public List<ServicesCost>? CostData { get; set; }
     }

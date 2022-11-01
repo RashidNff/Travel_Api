@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using TRAVEL_CORE.Entities;
 using TRAVEL_CORE.Entities.Order;
+using TRAVEL_CORE.Entities.Order.GetById;
 
 namespace TRAVEL_CORE.Repositories.Abstract
 {

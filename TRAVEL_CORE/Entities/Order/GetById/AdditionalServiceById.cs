@@ -1,6 +1,6 @@
-﻿namespace TRAVEL_CORE.Entities.Order
+﻿namespace TRAVEL_CORE.Entities.Order.GetById
 {
-    public class AdditionalServices
+    public class AdditionalServiceById
     {
         public int Id { get; set; }
         public int PersonId { get; set; }
