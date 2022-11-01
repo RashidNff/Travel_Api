@@ -270,6 +270,9 @@ namespace TRAVEL_CORE.Repositories.Concrete
             
         }
 
-
+        public OrderInfo GetOrderById(int ordId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
