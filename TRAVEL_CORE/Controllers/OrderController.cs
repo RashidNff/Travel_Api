@@ -73,6 +73,23 @@ namespace TRAVEL_CORE.Controllers
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult GetOrderNo()
+        {
+            try
+            {
+                return Ok(_orderRepository.GetOrderNo());
+            }
+            catch (Exception)
+            {
+                return BadRequest(new { message = "Unexpected error occurred!" });
+            }
+        }
+
 
     }
 }

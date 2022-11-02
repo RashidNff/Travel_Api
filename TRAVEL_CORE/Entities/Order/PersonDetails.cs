@@ -16,8 +16,7 @@
         public string? DocScan { get; set; }
         public string? DocName { get; set; }
         public List<AdditionalServices>? AdditionalServices { get; set; }
-        public List<SpecialServices>? SpecialServices { get; set; }
-        public List<int>? DeletedAdditionalServiceIds { get; set; }
-        public List<int>? DeletedSpecialServiceIds { get; set; }
+        public List<int>? SpecialServices { get; set; }
+
     }
 }

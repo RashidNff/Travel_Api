@@ -12,6 +12,8 @@ using System.Linq;
 using TRAVEL_CORE.Entities.Order.GetById;
 using Newtonsoft.Json;
 using TRAVEL_CORE.Entities;
+using System.Xml;
+using System.Text;
 
 namespace TRAVEL_CORE.Repositories.Concrete
 {
@@ -35,7 +37,9 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 {
                     new SqlParameter("OrderNo", order.OrderNo),
                     new SqlParameter("OrderType", order.OrderType),
-                    new SqlParameter("Orderdate", order.Orderdate),
+                    new SqlParameter("OrderDate", order.OrderNo),
+                    new SqlParameter("CompanyName", order.OrderNo),
+                    new SqlParameter("VOEN", order.OrderNo),
                     new SqlParameter("FullName", order.FullName),
                     new SqlParameter("Phone", order.Phone),
                     new SqlParameter("Email", order.Email)
@@ -165,39 +169,36 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 {
                     id = connection.Execute(tableName: "CRD.PersonDetails", operation: OperationType.Insert, parameters: personParameters);
                 }
-
                 
 
-                if (personDetail.DeletedAdditionalServiceIds != null)
-                    DeleteAdditionalService(personDetail.DeletedAdditionalServiceIds);                
-                if (personDetail.DeletedSpecialServiceIds != null)
-                    DeleteSpecialService(personDetail.DeletedSpecialServiceIds);
+                DeleteServices(id);                
 
                 if (personDetail.AdditionalServices != null)
                     SaveAdditionalServices(personDetail.AdditionalServices, id);
                 if (personDetail.SpecialServices != null)
                     SaveSpecialServices(personDetail.SpecialServices, id);
-
             }
             
             return id;
         }
 
+        private void DeleteServices(int personId)
+        {
+            connection.Execute(tableName: "CRD.AdditionalServices", operation: OperationType.Delete, fieldName: "PersonId", ID: personId);
+            connection.Execute(tableName: "CRD.SpecialServices", operation: OperationType.Delete, fieldName: "PersonId", ID: personId);
+        }
 
-        private void SaveSpecialServices(List<SpecialServices>? specialServices, int personId)
+        private void SaveSpecialServices(List<int>? specialServices, int personId)
         {
             foreach (var specialService in specialServices)
             {
                 List<SqlParameter> specialParameters = new List<SqlParameter>
                 {
                     new SqlParameter("PersonId", personId),
-                    new SqlParameter("ServiciesId", specialService.ServiciesId),
+                    new SqlParameter("ServiciesId", specialService),
                 };
 
-                if (specialService.Id != 0)
-                    connection.Execute(tableName: "CRD.SpecialServices", operation: OperationType.Update, fieldName: "Id", ID: specialService.Id, parameters: specialParameters);
-                else
-                    connection.Execute(tableName: "CRD.SpecialServices", operation: OperationType.Insert, parameters: specialParameters);
+                connection.Execute(tableName: "CRD.SpecialServices", operation: OperationType.Insert, parameters: specialParameters);
             }
         }
 
@@ -213,10 +214,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                     new SqlParameter("ReturnService", additionalService.ReturnService)
                 };
 
-                if (additionalService.Id != 0)
-                    connection.Execute(tableName: "CRD.AdditionalServices", operation: OperationType.Update, fieldName: "Id", ID: additionalService.Id, parameters: additionalParameters);
-                else
-                    connection.Execute(tableName: "CRD.AdditionalServices", operation: OperationType.Insert, parameters: additionalParameters);
+                connection.Execute(tableName: "CRD.AdditionalServices", operation: OperationType.Insert, parameters: additionalParameters);
             }
         }
 
@@ -381,6 +379,26 @@ namespace TRAVEL_CORE.Repositories.Concrete
 
                 personList.Add(personDetailsById);
             }
+        }
+
+        public string GetOrderNo()
+        {
+            StringBuilder formatString = new();
+            int number = 0;
+            string prefix = "ARTW";
+            var reader = connection.RunQuery(commandText: "CRD.SP_GetLastOrderNo", commandType: CommandType.StoredProcedure);
+
+            if (reader.Read())
+                number = Convert.ToInt32(reader["OrderNo"].ToString()?.Split('-')[1]);
+
+            for (int i = 0; i <= 4; i++)
+            {
+                formatString.Append("0");
+            }
+
+            string formattedNumber = (number + 1).ToString(formatString.ToString());
+
+            return $"{prefix}-{formattedNumber}";
         }
     }
 }

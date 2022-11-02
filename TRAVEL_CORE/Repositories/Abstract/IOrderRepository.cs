@@ -10,6 +10,6 @@ namespace TRAVEL_CORE.Repositories.Abstract
         DataTable GetAirBrowseData(FilterParameter filterParameter);
         OrderInfo GetOrderById(int ordId);
         int SaveOrder(SaveOrder order);
-
+        string GetOrderNo();
     }
 }
