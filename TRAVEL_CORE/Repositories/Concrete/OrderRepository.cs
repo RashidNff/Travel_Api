@@ -28,7 +28,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             {
                 foreach (var filter in filterParameter.Filters)
                 {
-                    stringFilter += $"and {filter.Key}={filter.Value}";
+                    stringFilter += $"and {filter.Key} Like N'%{filter.Value}%'";
                 }
             }
             
