@@ -21,16 +21,17 @@ namespace TRAVEL_CORE.Controllers
         }
 
         /// <summary>
-        /// Send Date for get Airway Data
+        /// Send Date for get Order Data
         /// </summary>
         /// <param name="filterParameter"></param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpPost]
-        public IActionResult GetAirBrowseData(FilterParameter filterParameter)
+        public IActionResult GetOrderBrowseData(FilterParameter filterParameter)
         {
             try
             {
-                return Ok(JsonConvert.SerializeObject(_orderRepository.GetAirBrowseData(filterParameter)));
+                return Ok(JsonConvert.SerializeObject(_orderRepository.GetOrderBrowseData(filterParameter)));
             }
             catch (Exception)
             {

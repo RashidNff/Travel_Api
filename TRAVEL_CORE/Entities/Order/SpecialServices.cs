@@ -2,7 +2,6 @@
 {
     public class SpecialServices
     {
-        public int Id { get; set; }
-        public int ServiciesId { get; set; }
+        public int ServicesId { get; set; }
     }
 }

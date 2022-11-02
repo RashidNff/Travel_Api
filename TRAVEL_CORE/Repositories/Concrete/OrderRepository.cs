@@ -21,12 +21,27 @@ namespace TRAVEL_CORE.Repositories.Concrete
     {
         Connection connection = new Connection();
 
-        public DataTable GetAirBrowseData(FilterParameter filterParameter)
+        public DataTable GetOrderBrowseData(FilterParameter filterParameter)
         {
+            string stringFilter = "";
+            if (filterParameter.Filters != null)
+            {
+                foreach (var filter in filterParameter.Filters)
+                {
+                    stringFilter += $"and {filter.Key}={filter.Value}";
+                }
+            }
+            
             List<SqlParameter> parameters = new List<SqlParameter>();
             parameters.Add(new SqlParameter("FromDate", filterParameter.FromDate));
             parameters.Add(new SqlParameter("ToDate", filterParameter.ToDate));
-            var data = connection.GetData(commandText: "SP_GetAllAirBrowseData", parameters: parameters, commandType: CommandType.StoredProcedure);
+
+
+            var query = $@"Select OrderNo, Convert(varchar, Orderdate, 10) Orderdate, FullName, FromPoint, ToPoint, DepartureDate, ReturnDate, PassengersCount  from OPR.Orders Ord
+                            Left Join  OPR.Airways Air ON Air.OrderId = Ord.Id and Air.Status = 1
+                            WHERE Ord.Status = 1 and  Orderdate between @FromDate and @ToDate {stringFilter}";
+
+            var data = connection.GetData(commandText: query, parameters: parameters);
             return data;
         }
 
@@ -195,7 +210,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 List<SqlParameter> specialParameters = new List<SqlParameter>
                 {
                     new SqlParameter("PersonId", personId),
-                    new SqlParameter("ServiciesId", specialService),
+                    new SqlParameter("ServicesId", specialService),
                 };
 
                 connection.Execute(tableName: "CRD.SpecialServices", operation: OperationType.Insert, parameters: specialParameters);
