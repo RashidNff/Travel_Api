@@ -2,6 +2,7 @@
 using TRAVEL_CORE.Entities;
 using TRAVEL_CORE.Entities.Order;
 using TRAVEL_CORE.Entities.Order.GetById;
+using TRAVEL_CORE.Entities.TemplateCost;
 
 namespace TRAVEL_CORE.Repositories.Abstract
 {
@@ -11,5 +12,7 @@ namespace TRAVEL_CORE.Repositories.Abstract
         OrderInfo GetOrderById(int ordId);
         int SaveOrder(SaveOrder order);
         string GetOrderNo();
+        List<TemplateCostLinesById> GetTemplateCostData(int templateCostId);
+
     }
 }

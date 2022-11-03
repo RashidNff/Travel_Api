@@ -15,5 +15,11 @@ namespace TRAVEL_CORE.Repositories.Concrete
             var data = connection.GetData(commandText: "SP_GETSPECODE", parameters: parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
+
+        public DataTable GetTemplateCosts()
+        {
+            var data = connection.GetData(commandText: "CRD.SP_GetTemplateCosts", commandType: CommandType.StoredProcedure);
+            return data;
+        }
     }
 }

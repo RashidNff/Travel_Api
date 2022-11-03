@@ -3,7 +3,6 @@
     public class Hotel
     {
         public int Id { get; set; }
-        public int OrderId { get; set; }
         public string? HotelName { get; set; }
         public DateTime EnrtyDate { get; set; }
         public DateTime ExitDate { get; set; }

@@ -81,7 +81,7 @@ namespace TRAVEL_CORE.Tools
             UploadedFile uploaded = new UploadedFile();
 
             if (lastFileId != -1)
-                DeleteFile(lastFileId);
+                //DeleteFile(lastFileId);
 
             try
             {

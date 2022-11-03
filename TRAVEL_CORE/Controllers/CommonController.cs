@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using TRAVEL_CORE.Entities;
 using TRAVEL_CORE.Repositories.Abstract;
+using TRAVEL_CORE.Repositories.Concrete;
 using TRAVEL_CORE.Tools;
 
 namespace TRAVEL_CORE.Controllers
@@ -53,6 +54,24 @@ namespace TRAVEL_CORE.Controllers
                 return Ok(JsonConvert.SerializeObject(_commonRepository.GetSpecode(type)));
             }
             catch (System.Exception)
+            {
+                return BadRequest(new { message = "Unexpected error occurred!" });
+            }
+        }
+
+        /// <summary>
+        /// Get Template Costs Id And Text
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult GetTemplateCosts()
+        {
+            try
+            {
+                return Ok(JsonConvert.SerializeObject(_commonRepository.GetTemplateCosts()));
+
+            }
+            catch (Exception)
             {
                 return BadRequest(new { message = "Unexpected error occurred!" });
             }

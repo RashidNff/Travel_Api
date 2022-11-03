@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using TRAVEL_CORE.Entities;
 using System.Xml;
 using System.Text;
+using TRAVEL_CORE.Entities.TemplateCost;
 
 namespace TRAVEL_CORE.Repositories.Concrete
 {
@@ -52,12 +53,13 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 {
                     new SqlParameter("OrderNo", order.OrderNo),
                     new SqlParameter("OrderType", order.OrderType),
-                    new SqlParameter("OrderDate", order.OrderNo),
-                    new SqlParameter("CompanyName", order.OrderNo),
-                    new SqlParameter("VOEN", order.OrderNo),
+                    new SqlParameter("OrderDate", order.OrderDate),
+                    new SqlParameter("CompanyName", order.CompanyName),
+                    new SqlParameter("VOEN", order.VOEN),
                     new SqlParameter("FullName", order.FullName),
                     new SqlParameter("Phone", order.Phone),
-                    new SqlParameter("Email", order.Email)
+                    new SqlParameter("Email", order.Email),
+                    new SqlParameter("CreatedBy", order.CreatedBy)
                 };
 
             if (order.Id != 0)
@@ -67,13 +69,11 @@ namespace TRAVEL_CORE.Repositories.Concrete
 
             if (order.AirwayData != null)
             {
-                order.AirwayData.OrderId = generatedOrderId;
-                SaveAirwayData(order.AirwayData);
+                SaveAirwayData(order.AirwayData, generatedOrderId);
             }
             if (order.HotelData != null)
             {
-                order.HotelData.OrderId = generatedOrderId;
-                SaveHotelData(order.HotelData);
+                SaveHotelData(order.HotelData, generatedOrderId);
             }            
             
             if (order.CostData != null)
@@ -86,12 +86,12 @@ namespace TRAVEL_CORE.Repositories.Concrete
         }
 
 
-        private void SaveAirwayData(Airway airwayModel)
+        private void SaveAirwayData(Airway airwayModel, int orderId)
         {
             int id = 0, generatedPersonId = 0;
             List<SqlParameter> airwayParameters = new List<SqlParameter>
                 {
-                    new SqlParameter("OrderId", airwayModel.OrderId),
+                    new SqlParameter("OrderId", orderId),
                     new SqlParameter("FromPoint", airwayModel.FromPoint),
                     new SqlParameter("ToPoint", airwayModel.ToPoint),
                     new SqlParameter("DepartureDate", airwayModel.DepartureDate),
@@ -103,13 +103,10 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 };
 
             if (airwayModel.Id != 0)
-            {
                 id = connection.Execute(tableName: "OPR.Airways", operation: OperationType.Update, fieldName: "Id", ID: airwayModel.Id, parameters: airwayParameters);
-            }
             else
-            {
                 id = connection.Execute(tableName: "OPR.Airways", operation: OperationType.Insert, parameters: airwayParameters);
-            }
+
 
             if (airwayModel.DeletedPersonDetailIds != null)
                 DeletePersonAndServices(airwayModel.DeletedPersonDetailIds);
@@ -118,12 +115,12 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 generatedPersonId = SavePersonDetails(airwayModel.PersonDetails, id, (int)OrderOperationType.Airway);
         }
 
-        private void SaveHotelData(Hotel hotelModel)
+        private void SaveHotelData(Hotel hotelModel, int orderId)
         {
             int id = 0, generatedPersonId = 0;
             List<SqlParameter> hotelParameters = new List<SqlParameter>
             {
-                    new SqlParameter("OrderId", hotelModel.OrderId),
+                    new SqlParameter("OrderId", orderId),
                     new SqlParameter("HotelName", hotelModel.HotelName),
                     new SqlParameter("EntryDate", hotelModel.EnrtyDate),
                     new SqlParameter("ExitDate", hotelModel.ExitDate),
@@ -166,7 +163,6 @@ namespace TRAVEL_CORE.Repositories.Concrete
                     new SqlParameter("DocNumber", personDetail.DocNumber),
                     new SqlParameter("DocIssueCountry", personDetail.DocIssueCountry),
                     new SqlParameter("DocExpireDate", personDetail.DocExpireDate),
-                    new SqlParameter("DocScan", personDetail.DocScan)
                 };
 
                 if (!string.IsNullOrEmpty(personDetail.DocName))
@@ -177,13 +173,9 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 }
 
                 if (personDetail.Id != 0)
-                {
                     id = connection.Execute(tableName: "CRD.PersonDetails", operation: OperationType.Update, fieldName: "Id", ID: personDetail.Id, parameters: personParameters);
-                }
                 else
-                {
                     id = connection.Execute(tableName: "CRD.PersonDetails", operation: OperationType.Insert, parameters: personParameters);
-                }
                 
 
                 DeleteServices(id);                
@@ -267,7 +259,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             {
                 List<SqlParameter> costParameters = new List<SqlParameter>
                 {
-                    new SqlParameter("OrderId", cost.OrderId),
+                    new SqlParameter("OrderId", orderId),
                     new SqlParameter("Vender", cost.Vender),
                     new SqlParameter("VenderService", cost.VenderService),
                     new SqlParameter("Qty", cost.Qty),
@@ -277,6 +269,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                     new SqlParameter("SaleAmount", cost.SaleAmount),
                     new SqlParameter("VAT", cost.VAT),
                     new SqlParameter("Currency", cost.Currency),
+                    new SqlParameter("CurrencyRate", cost.CurrencyRate),
                     new SqlParameter("CurrencyAmount", cost.CurrencyAmount)
                 };
 
@@ -414,6 +407,19 @@ namespace TRAVEL_CORE.Repositories.Concrete
             string formattedNumber = (number + 1).ToString(formatString.ToString());
 
             return $"{prefix}-{formattedNumber}";
+        }
+
+        public List<TemplateCostLinesById> GetTemplateCostData(int templateCostId)
+        {
+            List<TemplateCostLinesById>? templateCosts = new();
+
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            parameters.Add(new SqlParameter("Id", templateCostId));
+
+            var costlines = connection.GetData(commandText: "CRD.SP_GetTemplateCostLinesById", parameters: parameters, commandType: CommandType.StoredProcedure);
+            templateCosts = JsonConvert.DeserializeObject<List<TemplateCostLinesById>>(JsonConvert.SerializeObject(costlines));
+
+            return templateCosts;
         }
     }
 }

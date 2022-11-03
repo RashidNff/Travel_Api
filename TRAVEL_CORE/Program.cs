@@ -26,7 +26,7 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<ICommonRepository, CommonRepository>();
-
+builder.Services.AddScoped<ITemplateCostRepository, TemplateCostRepository>();
 
 builder.Services.AddSwaggerGen(opt =>
 {

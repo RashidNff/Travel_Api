@@ -3,7 +3,6 @@
     public class Airway
     {
         public int Id { get; set; }
-        public int OrderId { get; set; }
         public string? FromPoint { get; set; }
         public string? ToPoint { get; set; }
         public DateTime DepartureDate { get; set; }

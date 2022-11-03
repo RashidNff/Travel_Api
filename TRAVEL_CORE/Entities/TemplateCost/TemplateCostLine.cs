@@ -1,9 +1,7 @@
-﻿namespace TRAVEL_CORE.Entities.Order
+﻿namespace TRAVEL_CORE.Entities.TemplateCost
 {
-    public class ServicesCost
+    public class TemplateCostLine
     {
-        public int Id { get; set; }
-        public int OrderId { get; set; }
         public string? Vender { get; set; }
         public int VenderService { get; set; }
         public int Qty { get; set; }

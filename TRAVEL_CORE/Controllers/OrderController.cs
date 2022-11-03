@@ -91,6 +91,24 @@ namespace TRAVEL_CORE.Controllers
             }
         }
 
+        /// <summary>
+        /// Send Temaplate Cost Id to get Template Cost Data
+        /// </summary>
+        /// <param name="templateCost"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult GetTemplateCostData(int templateCostId)
+        {
+            try
+            {
+                return Ok(_orderRepository.GetTemplateCostData(templateCostId));
+            }
+            catch (Exception)
+            {
+                return BadRequest(new { message = "Unexpected error occurred!" });
+            }
+        }
 
     }
 }
