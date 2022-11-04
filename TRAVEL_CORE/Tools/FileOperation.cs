@@ -80,7 +80,7 @@ namespace TRAVEL_CORE.Tools
             Connection connection = new Connection();
             UploadedFile uploaded = new UploadedFile();
 
-            if (lastFileId != -1)
+            //if (lastFileId != -1)
                 //DeleteFile(lastFileId);
 
             try
@@ -121,12 +121,6 @@ namespace TRAVEL_CORE.Tools
             catch (Exception ex)
             { }
             return uploaded;
-        }
-
-        public void DeleteFile(int fileId)
-        {
-            Connection connection = new Connection();
-            connection.RunQuery("Update TBL_UPFILES set UF_STATUS=-1 where UF_ID=" + fileId);
         }
 
         public void DeleteFileFromServer(string rootDirectory, int lastFileId, string lastFilePath)
