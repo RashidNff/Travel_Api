@@ -310,7 +310,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 airwayInfo.ReturnDate = Convert.ToDateTime(readerAir["ReturnDate"].ToString());
                 airwayInfo.FlightClassId = Convert.ToInt32(readerAir["FlightClassId"].ToString());
                 airwayInfo.PassengersCount = Convert.ToInt32(readerAir["PassengersCount"].ToString());
-                airwayInfo.Bron = Convert.ToByte(readerAir["PassengersCount"].ToString());
+                airwayInfo.Bron = Convert.ToBoolean(readerAir["Bron"].ToString());
                 airwayInfo.BronExpiryDate = Convert.ToDateTime(readerAir["BronExpiryDate"].ToString());
 
                 List<PersonDetailsById> personList = new();

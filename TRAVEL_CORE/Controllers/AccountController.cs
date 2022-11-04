@@ -41,11 +41,6 @@ namespace TRAVEL_CORE.Controllers
             return Ok(userData);
         }
 
-        [HttpGet]
-        public IActionResult Test()
-        {
-            return Ok();
-        }
 
     }
 }
