@@ -67,23 +67,24 @@ namespace TRAVEL_CORE.Repositories.Concrete
             else
                 generatedOrderId = connection.Execute(tableName: "OPR.Orders", operation: OperationType.Insert, parameters: orderParameters);
 
+
             if (order.AirwayData != null)
-            {
                 SaveAirwayData(order.AirwayData, generatedOrderId);
-            }
+            else
+                DeleteAirwayData(generatedOrderId);
+
             if (order.HotelData != null)
-            {
                 SaveHotelData(order.HotelData, generatedOrderId);
-            }            
+            else
+                DeleteHotelData(generatedOrderId);
             
             if (order.CostData != null)
-            {
                 SaveCostData(order.CostData, generatedOrderId);
-            }
 
 
             return generatedOrderId;
         }
+
 
 
         private void SaveAirwayData(Airway airwayModel, int orderId)
@@ -195,6 +196,14 @@ namespace TRAVEL_CORE.Repositories.Concrete
             connection.Execute(tableName: "CRD.SpecialServices", operation: OperationType.Delete, fieldName: "PersonId", ID: personId);
         }
 
+        private void DeleteAirwayData(int generatedOrderId)
+        {
+            connection.Execute(tableName: "CRD.Airways", operation: OperationType.Delete, fieldName: "OrderId", ID: generatedOrderId);
+        }
+        private void DeleteHotelData(int generatedOrderId)
+        {
+            connection.Execute(tableName: "CRD.Hotels", operation: OperationType.Delete, fieldName: "OrderId", ID: generatedOrderId);
+        }
         private void SaveSpecialServices(List<int>? specialServices, int personId)
         {
             foreach (var specialService in specialServices)
