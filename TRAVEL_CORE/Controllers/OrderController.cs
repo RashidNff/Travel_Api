@@ -5,6 +5,9 @@ using TRAVEL_CORE.Entities;
 using TRAVEL_CORE.Tools;
 using TRAVEL_CORE.Entities.Order;
 using TRAVEL_CORE.Repositories.Abstract;
+using System.Net.Mail;
+using System.Net;
+using TRAVEL_CORE.Entities.Login;
 
 namespace TRAVEL_CORE.Controllers
 {
@@ -108,6 +111,23 @@ namespace TRAVEL_CORE.Controllers
             {
                 return BadRequest(new { message = "Unexpected error occurred!" });
             }
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult SendMail()
+        {
+            try
+            {
+                _orderRepository.SendMail();
+                string message = $"<div style=\"font-size:16px\">Salam! <br/>Use this credentials to login your account at <a href=\"http://93.88.82.122:5067/auth/login\">here</a><br/> Username: {1}<br/>Password: {2}</div>";
+                CommonTools.SendEmail("matvey_214@mail.ru", "Məlumatlandırma", message);
+            }
+            catch (Exception)
+            {
+                return BadRequest(new { message = "Unexpected error occurred!" });
+            }
+            return NoContent();
         }
 
     }

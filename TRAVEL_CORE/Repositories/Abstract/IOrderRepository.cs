@@ -13,6 +13,7 @@ namespace TRAVEL_CORE.Repositories.Abstract
         int SaveOrder(SaveOrder order);
         string GetOrderNo();
         List<TemplateCostLinesById> GetTemplateCostData(int templateCostId);
+        void SendMail();
 
     }
 }

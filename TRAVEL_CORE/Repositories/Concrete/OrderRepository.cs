@@ -430,5 +430,25 @@ namespace TRAVEL_CORE.Repositories.Concrete
 
             return templateCosts;
         }
+
+        public void SendMail()
+        {
+            OrderInfo orderInfo = new();
+
+            var reader = connection.RunQuery(commandText: "CRD.SP_GetOrderInfo", commandType: CommandType.StoredProcedure);
+            if (reader.Read())
+            {
+                orderInfo.Id = Convert.ToInt32(reader["Id"]);
+                orderInfo.OrderNo = reader["OrderNo"].ToString();
+                orderInfo.OrderType = Convert.ToInt16(reader["OrderType"].ToString());
+                orderInfo.FullName = reader["Fullname"].ToString();
+                orderInfo.Phone = reader["Phone"].ToString();
+                orderInfo.Email = reader["Email"].ToString();
+            }
+            reader.Close();
+
+            string message = $"<div style=\"font-size:16px\">Salam! <br/>Use this credentials to login your account at <a href=\"http://93.88.82.122:5067/auth/login\">here</a><br/> Username: {1}<br/>Password: {2}</div>";
+            CommonTools.SendEmail("matvey_214@mail.ru", "Məlumatlandırma", message);
+        }
     }
 }
