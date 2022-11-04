@@ -12,6 +12,8 @@
         public int PassengersCount { get; set; }
         public Boolean Bron { get; set; }
         public DateTime BronExpiryDate { get; set; }
+        public List<PersonAgeCount>? PersonAgeCount { get; set; }
+
         public List<PersonDetailsById>? PersonDetails { get; set; }
 
     }

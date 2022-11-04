@@ -15,6 +15,7 @@ using TRAVEL_CORE.Entities;
 using System.Xml;
 using System.Text;
 using TRAVEL_CORE.Entities.TemplateCost;
+using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace TRAVEL_CORE.Repositories.Concrete
 {
@@ -322,9 +323,13 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 airwayInfo.Bron = Convert.ToBoolean(readerAir["Bron"].ToString());
                 airwayInfo.BronExpiryDate = Convert.ToDateTime(readerAir["BronExpiryDate"].ToString());
 
+                List<PersonAgeCount> personAgeCountsList = new();
+                personAgeCountsList = GetPersonAgeCount(personAgeCountsList, airwayInfo.Id, OrderOperationType.Airway);
+
                 List<PersonDetailsById> personList = new();
                 GetPersonDataById(personList, airwayInfo.Id, OrderOperationType.Airway);
 
+                airwayInfo.PersonAgeCount = personAgeCountsList;
                 airwayInfo.PersonDetails = personList;
             }
             readerAir.Close();
@@ -344,9 +349,13 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 hotelInfo.Bron = Convert.ToBoolean(readerHotel["Bron"].ToString());
                 hotelInfo.BronExpiryDate = Convert.ToDateTime(readerHotel["BronExpiryDate"].ToString());
 
+                List<PersonAgeCount> personAgeCountsList = new();
+                personAgeCountsList = GetPersonAgeCount(personAgeCountsList, hotelInfo.Id, OrderOperationType.Hotel);
+
                 List<PersonDetailsById> personList = new();
                 GetPersonDataById(personList, hotelInfo.Id, OrderOperationType.Hotel);
 
+                hotelInfo.PersonAgeCount = personAgeCountsList;
                 hotelInfo.PersonDetails = personList;
             }
             readerHotel.Close();
@@ -359,6 +368,16 @@ namespace TRAVEL_CORE.Repositories.Concrete
             orderInfo.CostData = JsonConvert.DeserializeObject<List<ServicesCost>>(JsonConvert.SerializeObject(costLines));
 
             return orderInfo;
+        }
+
+        private List<PersonAgeCount> GetPersonAgeCount(List<PersonAgeCount>? personAgeCountsList, int operationId, OrderOperationType operationType)
+        {
+            List<SqlParameter> countParametrs = new List<SqlParameter>();
+            countParametrs.Add(new SqlParameter("OperationType", operationType));
+            countParametrs.Add(new SqlParameter("OperationId", operationId));
+
+            var ageCountlines = connection.GetData(commandText: "CRD.SP_GetPersonAgeCategoryCount", parameters: countParametrs, commandType: CommandType.StoredProcedure);
+            return JsonConvert.DeserializeObject<List<PersonAgeCount>>(JsonConvert.SerializeObject(ageCountlines));
         }
 
         private void GetPersonDataById(List<PersonDetailsById> personList, int Id, OrderOperationType orderOperationType)
@@ -384,7 +403,9 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 personDetailsById.DocIssueCountry = readerPerson["DocIssueCountry"].ToString();
                 personDetailsById.DocExpireDate = Convert.ToDateTime(readerPerson["DocExpireDate"].ToString());
                 personDetailsById.DocScan = readerPerson["DocScan"].ToString();
-            
+
+
+
                 List<SqlParameter> additionalAndSpecial = new List<SqlParameter>();
                 additionalAndSpecial.Add(new SqlParameter("PersonId", personDetailsById.Id));
 
