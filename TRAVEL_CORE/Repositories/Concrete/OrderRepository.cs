@@ -101,7 +101,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                     new SqlParameter("FlightClassId", airwayModel.FlightClassId),
                     new SqlParameter("PassengersCount", airwayModel.PassengersCount),
                     new SqlParameter("Bron", airwayModel.Bron),
-                    new SqlParameter("BronExpiryDate", airwayModel.BronExpiryDate)
+                    new SqlParameter("BronExpiryDate", airwayModel.BronExpiryDate?.ToString("yyyy-MM-dd") ?? String.Empty)
                 };
 
             if (airwayModel.Id != 0)
@@ -129,7 +129,8 @@ namespace TRAVEL_CORE.Repositories.Concrete
                     new SqlParameter("GuestCount", hotelModel.GuestCount),
                     new SqlParameter("RoomClassId", hotelModel.RoomClassId),
                     new SqlParameter("Bron", hotelModel.Bron),
-                    new SqlParameter("BronExpiryDate", hotelModel.BronExpiryDate)
+                    new SqlParameter("BronExpiryDate", hotelModel.BronExpiryDate?.ToString("yyyy-MM-dd") ?? String.Empty)
+
             };
 
             if (hotelModel.Id != 0)
