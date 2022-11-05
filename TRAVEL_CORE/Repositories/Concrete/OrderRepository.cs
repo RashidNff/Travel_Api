@@ -41,18 +41,18 @@ namespace TRAVEL_CORE.Repositories.Concrete
 
             var query = $@"Select OrderNo,Ord.ID,
                             --AirWay
-                            CompanyName, FullName, Phone, FromPoint, ToPoint, DepartureDate, ReturnDate, PassengersCount,
+                            CompanyName, FullName, Phone, FromPoint, ToPoint, Convert(varchar, DepartureDate, 105) DepartureDate, Convert(varchar, ReturnDate, 105) ReturnDate, PassengersCount,
                             Case 
 	                            when Air.Bron = 0  then null
-	                            else Air.BronExpiryDate
+	                            else Convert(varchar, Air.BronExpiryDate, 105)
                             End AirwayBronExpiryDate,
                             --Hotel
                             HotelName, EntryDate, ExitDate, GuestCount, PCOUNT RoomCount,
                             Case 
 	                            when H.Bron = 0 then null
-	                            else H.BronExpiryDate
+	                            else Convert(varchar, H.BronExpiryDate, 105)
                             End HotelBronExpiryDate,
-                            Convert(varchar, Orderdate, 10) Orderdate,
+                            Convert(varchar, Orderdate, 105) Orderdate,
                             Sc.SaleAmount,SC.AznAmount,
                             Ord.Status
                             from OPR.Orders Ord
@@ -317,7 +317,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             
             List<SqlParameter> parameters = new List<SqlParameter>();
             parameters.Add(new SqlParameter("OrderId", ordId));
-            var reader = connection.RunQuery(commandText: "CRD.SP_GetOrderInfo", parameters: parameters, commandType: CommandType.StoredProcedure);
+            var reader = connection.RunQuery(commandText: "CRD.SP_GetOrderInfoById", parameters: parameters, commandType: CommandType.StoredProcedure);
             if (reader.Read())
             {
                 orderInfo.Id = Convert.ToInt32(reader["Id"]);
@@ -473,26 +473,6 @@ namespace TRAVEL_CORE.Repositories.Concrete
             return templateCosts;
         }
 
-        public void SendMail()
-        {
-            OrderInfo orderInfo = new();
-
-            var reader = connection.RunQuery(commandText: "CRD.SP_GetOrderInfo", commandType: CommandType.StoredProcedure);
-            if (reader.Read())
-            {
-                orderInfo.Id = Convert.ToInt32(reader["Id"]);
-                orderInfo.OrderNo = reader["OrderNo"].ToString();
-                orderInfo.OrderType = Convert.ToInt16(reader["OrderType"].ToString());
-                orderInfo.FullName = reader["Fullname"].ToString();
-                orderInfo.Phone = reader["Phone"].ToString();
-                orderInfo.Email = reader["Email"].ToString();
-            }
-            reader.Close();
-
-            string message = $"<div style=\"font-size:16px\">Salam! <br/>Use this credentials to login your account at <a href=\"http://93.88.82.122:5067/auth/login\">here</a><br/> Username: {1}<br/>Password: {2}</div>";
-            CommonTools.SendEmail("matvey_214@mail.ru", "Məlumatlandırma", message);
-        }
-
         public void ChangeOrderStatus(ChangeStatus model)
         {
             List<SqlParameter> parameters = new List<SqlParameter>();
@@ -500,6 +480,24 @@ namespace TRAVEL_CORE.Repositories.Concrete
             parameters.Add(new SqlParameter("Id", model.Id));
             parameters.Add(new SqlParameter("Status", model.Status));
             connection.RunQuery(commandText: "SP_CHANGESTATUS", parameters: parameters, commandType: CommandType.StoredProcedure);
+        }
+
+        public void SendMail()
+        {
+            OrderMail orderInfo = new();
+
+            var reader = connection.RunQuery(commandText: "OPR.SP_GetOrderInfo", commandType: CommandType.StoredProcedure);
+            while (reader.Read())
+            {
+                orderInfo.OrderNo = reader["OrderNo"].ToString();
+                orderInfo.Orderdate = reader["Orderdate"].ToString();
+                orderInfo.FullName = reader["Fullname"].ToString();
+                orderInfo.BronExpiryDate = reader["BronExpiryDate"].ToString();
+
+                string message = $"<div style=\"font-size:16px\">Salam! <br/>{orderInfo.Orderdate} tarixində verilən {orderInfo.OrderNo} <a href=\"http://93.88.82.122:5067/auth/login\">here</a><br/> Username: {1}<br/>Password: {2}</div>";
+                CommonTools.SendEmail("matvey_214@mail.ru", "Məlumatlandırma", message);
+            }
+            reader.Close();
         }
     }
 }
