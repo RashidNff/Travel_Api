@@ -117,6 +117,7 @@ namespace TRAVEL_CORE.Tools
         {
             using (MailMessage mm = new("no-reply@adycontainer.com", to))
             {
+                mm.From = new MailAddress("no-reply@adycontainer.com", "ART Travel");
                 mm.Subject = subject;
                 mm.Body = message;
                 mm.IsBodyHtml = true;

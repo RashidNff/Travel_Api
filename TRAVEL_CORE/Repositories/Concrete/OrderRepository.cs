@@ -63,7 +63,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                             SUM(CurrencyAmount) AznAmount 
                             FROM OPR.ServicesCost  GROUP BY OrderId --,CurrencyRate
                             ) SC ON SC.OrderId = Ord.Id 
-                            WHERE Ord.Status = 1 and  Orderdate between @FromDate and @ToDate {stringFilter}";
+                            WHERE Orderdate between @FromDate and @ToDate {stringFilter}";
 
             var data = connection.GetData(commandText: query, parameters: parameters);
             return data;
@@ -495,7 +495,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 orderInfo.OperationType = reader["OperationType"].ToString();
                 orderInfo.BronExpiryDate = reader["BronExpiryDate"].ToString();
 
-                string message = $"<div style=\"font-size:16px\">Salam! <br/>{orderInfo.Orderdate} tarixində verilən {orderInfo.OrderNo} nömrəli sifarişin bron müddətinin bitməsinə 1 gün qalıb.<br/> Sifarişi yaradan şəxs: {orderInfo.FullName}<br/>Əməliyyatın tipi: {orderInfo.OperationType}<br/>Bron bitmə tarixi: {orderInfo.BronExpiryDate}</div>";
+                string message = $"<div style=\"font-size:16px\">Salam! <br/><br/>{orderInfo.Orderdate} tarixində verilən <b>{orderInfo.OrderNo} </b> nömrəli sifarişin bron müddətinin bitməsinə 1 gün qalıb.<br/><br/><br/> <b>Sifarişi yaradan şəxs:</b> {orderInfo.FullName}<br/><b style=\"margin-right:40px\">Əməliyyatın tipi:</b> {orderInfo.OperationType}<br/><b style=\"margin-right:30px\">Bron bitmə tarixi:</b> {orderInfo.BronExpiryDate}</div>";
                 CommonTools.SendEmail("matvey_214@mail.ru", "Məlumatlandırma", message);
             }
             reader.Close();

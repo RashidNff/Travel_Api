@@ -142,8 +142,6 @@ namespace TRAVEL_CORE.Controllers
             try
             {
                 _orderRepository.SendMail();
-                string message = $"<div style=\"font-size:16px\">Salam! <br/>Use this credentials to login your account at <a href=\"http://93.88.82.122:5067/auth/login\">here</a><br/> Username: {1}<br/>Password: {2}</div>";
-                CommonTools.SendEmail("matvey_214@mail.ru", "Məlumatlandırma", message);
             }
             catch (Exception)
             {
