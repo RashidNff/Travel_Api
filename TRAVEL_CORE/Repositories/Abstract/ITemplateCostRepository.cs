@@ -10,6 +10,6 @@ namespace TRAVEL_CORE.Repositories.Abstract
         DataTable GetTemplateCostBrowseData(TempCostFilterParametr filterParameter);
         TemplateCost GetTemplateCostById(int templateCostId);
         int SaveTemplateCost(TemplateCost templateCosts);
-        void ChangeTemplateCostStatus(int templateCostId, int status);
+        void ChangeTemplateCostStatus(ChangeStatus model);
     }
 }

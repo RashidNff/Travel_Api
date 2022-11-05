@@ -90,11 +90,11 @@ namespace TRAVEL_CORE.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPut]
-        public IActionResult ChangeTemplateCostStatus(int templateCostId, int status)
+        public IActionResult ChangeTemplateCostStatus(ChangeStatus model)
         {
             try
             {
-                _templateCostRepository.ChangeTemplateCostStatus(templateCostId, status);
+                _templateCostRepository.ChangeTemplateCostStatus(model);
             }
             catch (Exception)
             {

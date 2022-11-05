@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Security.Cryptography;
 using TRAVEL_CORE.DAL;
+using TRAVEL_CORE.Entities;
 using TRAVEL_CORE.Entities.Login;
 using TRAVEL_CORE.Entities.Order;
 using TRAVEL_CORE.Entities.Order.GetById;
@@ -109,12 +110,12 @@ namespace TRAVEL_CORE.Repositories.Concrete
             }
         }
 
-        public void ChangeTemplateCostStatus(int templateCostId, int status)
+        public void ChangeTemplateCostStatus(ChangeStatus model)
         {
             List<SqlParameter> parameters = new List<SqlParameter>();
             parameters.Add(new SqlParameter("TableName", "OPR.TemplateCost"));
-            parameters.Add(new SqlParameter("Id", templateCostId));
-            parameters.Add(new SqlParameter("Status", status));
+            parameters.Add(new SqlParameter("Id", model.Id));
+            parameters.Add(new SqlParameter("Status", model.Status));
             connection.RunQuery(commandText: "SP_CHANGESTATUS", parameters: parameters, commandType: CommandType.StoredProcedure);
         }
     }

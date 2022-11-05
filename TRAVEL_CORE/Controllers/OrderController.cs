@@ -8,6 +8,7 @@ using TRAVEL_CORE.Repositories.Abstract;
 using System.Net.Mail;
 using System.Net;
 using TRAVEL_CORE.Entities.Login;
+using TRAVEL_CORE.Repositories.Concrete;
 
 namespace TRAVEL_CORE.Controllers
 {
@@ -111,6 +112,27 @@ namespace TRAVEL_CORE.Controllers
             {
                 return BadRequest(new { message = "Unexpected error occurred!" });
             }
+        }
+
+
+        /// <summary>
+        /// Change Order Status by Id
+        /// </summary>
+        /// <param name=""></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPut]
+        public IActionResult ChangeOrderStatus(ChangeStatus model)
+        {
+            try
+            {
+                _orderRepository.ChangeOrderStatus(model);
+            }
+            catch (Exception)
+            {
+                return BadRequest(new { message = "Unexpected error occurred!" });
+            }
+            return NoContent();
         }
 
         [AllowAnonymous]

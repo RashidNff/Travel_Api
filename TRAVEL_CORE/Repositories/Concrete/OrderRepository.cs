@@ -41,7 +41,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
 
             var query = $@"Select OrderNo,Ord.ID,
                             --AirWay
-                            CompanyName, FullName, Phone, FullName, FromPoint, ToPoint, DepartureDate, ReturnDate, PassengersCount,
+                            CompanyName, FullName, Phone, FromPoint, ToPoint, DepartureDate, ReturnDate, PassengersCount,
                             Case 
 	                            when Air.Bron = 0  then null
 	                            else Air.BronExpiryDate
@@ -491,6 +491,15 @@ namespace TRAVEL_CORE.Repositories.Concrete
 
             string message = $"<div style=\"font-size:16px\">Salam! <br/>Use this credentials to login your account at <a href=\"http://93.88.82.122:5067/auth/login\">here</a><br/> Username: {1}<br/>Password: {2}</div>";
             CommonTools.SendEmail("matvey_214@mail.ru", "Məlumatlandırma", message);
+        }
+
+        public void ChangeOrderStatus(ChangeStatus model)
+        {
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            parameters.Add(new SqlParameter("TableName", "OPR.Orders"));
+            parameters.Add(new SqlParameter("Id", model.Id));
+            parameters.Add(new SqlParameter("Status", model.Status));
+            connection.RunQuery(commandText: "SP_CHANGESTATUS", parameters: parameters, commandType: CommandType.StoredProcedure);
         }
     }
 }
