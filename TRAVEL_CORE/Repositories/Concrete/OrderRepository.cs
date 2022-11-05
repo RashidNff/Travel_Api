@@ -492,9 +492,10 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 orderInfo.OrderNo = reader["OrderNo"].ToString();
                 orderInfo.Orderdate = reader["Orderdate"].ToString();
                 orderInfo.FullName = reader["Fullname"].ToString();
+                orderInfo.OperationType = reader["OperationType"].ToString();
                 orderInfo.BronExpiryDate = reader["BronExpiryDate"].ToString();
 
-                string message = $"<div style=\"font-size:16px\">Salam! <br/>{orderInfo.Orderdate} tarixində verilən {orderInfo.OrderNo} nömrəli sifarişin bron müddətinin bitməsinə 1 gün qalıb.<br/> Sifarişi yaradan şəxs: {orderInfo.FullName}<br/>Bron bitmə tarixi: {orderInfo.BronExpiryDate}</div>";
+                string message = $"<div style=\"font-size:16px\">Salam! <br/>{orderInfo.Orderdate} tarixində verilən {orderInfo.OrderNo} nömrəli sifarişin bron müddətinin bitməsinə 1 gün qalıb.<br/> Sifarişi yaradan şəxs: {orderInfo.FullName}<br/>Əməliyyatın tipi: {orderInfo.OperationType}<br/>Bron bitmə tarixi: {orderInfo.BronExpiryDate}</div>";
                 CommonTools.SendEmail("matvey_214@mail.ru", "Məlumatlandırma", message);
             }
             reader.Close();
