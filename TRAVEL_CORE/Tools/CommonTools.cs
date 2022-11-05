@@ -115,19 +115,19 @@ namespace TRAVEL_CORE.Tools
 
         public static void SendEmail(string to, string subject, string message)
         {
-            using (MailMessage mm = new("no-reply@adycontainer.com", to))
+            using (MailMessage mm = new("system_info@uniser.az", to))
             {
-                mm.From = new MailAddress("no-reply@adycontainer.com", "ART Travel");
+                mm.From = new MailAddress("system_info@uniser.az", "ART Travel");
                 mm.Subject = subject;
                 mm.Body = message;
                 mm.IsBodyHtml = true;
-                //using (SmtpClient sc = new SmtpClient("smtp.yandex.ru", 25))
-                using (SmtpClient sc = new SmtpClient("smtp.office365.com", 587))
+
+                using (SmtpClient sc = new SmtpClient("mail.uniser.az", 25))
                 {
-                    sc.EnableSsl = true;
+                    sc.EnableSsl = false;
                     sc.DeliveryMethod = SmtpDeliveryMethod.Network;
                     sc.UseDefaultCredentials = false;
-                    sc.Credentials = new NetworkCredential("no-reply@adycontainer.com", GetAppSetttigs("MailPassword"));
+                    sc.Credentials = new NetworkCredential("system_info@uniser.az", GetAppSetttigs("MailPassword"));
                     sc.Send(mm);
                 }
             }

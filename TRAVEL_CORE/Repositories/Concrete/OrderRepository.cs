@@ -101,7 +101,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             else
                 DeleteHotelData(generatedOrderId);
             
-            if (order.CostData != null)
+            if (order.CostData.Count != 0)
                 SaveCostData(order.CostData, generatedOrderId);
 
 
@@ -492,11 +492,12 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 orderInfo.OrderNo = reader["OrderNo"].ToString();
                 orderInfo.Orderdate = reader["Orderdate"].ToString();
                 orderInfo.FullName = reader["Fullname"].ToString();
+                orderInfo.Email = reader["Email"].ToString();
                 orderInfo.OperationType = reader["OperationType"].ToString();
                 orderInfo.BronExpiryDate = reader["BronExpiryDate"].ToString();
 
-                string message = $"<div style=\"font-size:16px\">Salam! <br/><br/>{orderInfo.Orderdate} tarixində verilən <b>{orderInfo.OrderNo} </b> nömrəli sifarişin bron müddətinin bitməsinə 1 gün qalıb.<br/><br/><br/> <b>Sifarişi yaradan şəxs:</b> {orderInfo.FullName}<br/><b style=\"margin-right:40px\">Əməliyyatın tipi:</b> {orderInfo.OperationType}<br/><b style=\"margin-right:30px\">Bron bitmə tarixi:</b> {orderInfo.BronExpiryDate}</div>";
-                CommonTools.SendEmail("matvey_214@mail.ru", "Məlumatlandırma", message);
+                string message = $"<div style=\"font-size:16px\">Salam, {orderInfo.FullName}! <br/><br/>{orderInfo.Orderdate} tarixində verilən <b>{orderInfo.OrderNo} </b> nömrəli sifarişin bron müddətinin bitməsinə 1 gün qalıb.<br/><br/><br/> <b style=\"margin-right:40px\">Əməliyyatın tipi:</b> {orderInfo.OperationType}<br/><b style=\"margin-right:30px\">Bron bitmə tarixi:</b> {orderInfo.BronExpiryDate}<br/> <b>Ətraflı məlumat üçün əlaqə:</b> 055 555 55 55<br/></div>";
+                CommonTools.SendEmail("shahin.mustafayev@uniser.az", "Məlumatlandırma", message);
             }
             reader.Close();
         }
