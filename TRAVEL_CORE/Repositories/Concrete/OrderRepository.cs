@@ -39,8 +39,30 @@ namespace TRAVEL_CORE.Repositories.Concrete
             parameters.Add(new SqlParameter("ToDate", filterParameter.ToDate));
 
 
-            var query = $@"Select OrderNo, Convert(varchar, Orderdate, 10) Orderdate, FullName, FromPoint, ToPoint, DepartureDate, ReturnDate, PassengersCount  from OPR.Orders Ord
+            var query = $@"Select OrderNo,Ord.ID,
+                            --AirWay
+                            CompanyName, FullName, Phone, FullName, FromPoint, ToPoint, DepartureDate, ReturnDate, PassengersCount,
+                            Case 
+	                            when Air.Bron = 0  then null
+	                            else Air.BronExpiryDate
+                            End AirwayBronExpiryDate,
+                            --Hotel
+                            HotelName, EntryDate, ExitDate, GuestCount, PCOUNT RoomCount,
+                            Case 
+	                            when H.Bron = 0 then null
+	                            else H.BronExpiryDate
+                            End HotelBronExpiryDate,
+                            Convert(varchar, Orderdate, 10) Orderdate,
+                            Sc.SaleAmount,SC.AznAmount,
+                            Ord.Status
+                            from OPR.Orders Ord
                             Left Join  OPR.Airways Air ON Air.OrderId = Ord.Id and Air.Status = 1
+                            Left Join  OPR.Hotels H ON H.OrderId = Ord.Id and H.Status = 1
+                            Left Join  (SELECT OperationId,COUNT(*) PCOUNT FROM CRD.PersonDetails WHERE OperationType=2 GROUP BY OperationId) P ON p.OperationId = H.Id 
+                            Left Join  (SELECT OrderId,SUM(SaleAmount) SaleAmount,--CurrencyRate rate,
+                            SUM(CurrencyAmount) AznAmount 
+                            FROM OPR.ServicesCost  GROUP BY OrderId --,CurrencyRate
+                            ) SC ON SC.OrderId = Ord.Id 
                             WHERE Ord.Status = 1 and  Orderdate between @FromDate and @ToDate {stringFilter}";
 
             var data = connection.GetData(commandText: query, parameters: parameters);
@@ -130,7 +152,6 @@ namespace TRAVEL_CORE.Repositories.Concrete
                     new SqlParameter("RoomClassId", hotelModel.RoomClassId),
                     new SqlParameter("Bron", hotelModel.Bron),
                     new SqlParameter("BronExpiryDate", hotelModel.BronExpiryDate?.ToString("yyyy-MM-dd") ?? String.Empty)
-
             };
 
             if (hotelModel.Id != 0)
@@ -157,7 +178,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 {
                     new SqlParameter("OperationId", operationId),
                     new SqlParameter("OperationType", operationType),
-                    new SqlParameter("PersonAgeCategory", personDetail.PersonAgeCategory),
+                    new SqlParameter("Category", personDetail.Category),
                     new SqlParameter("Name", personDetail.Name),
                     new SqlParameter("Surname", personDetail.Surname),
                     new SqlParameter("Gender", personDetail.Gender),
@@ -278,7 +299,6 @@ namespace TRAVEL_CORE.Repositories.Concrete
                     new SqlParameter("VenderAmount", cost.VenderAmount),
                     new SqlParameter("SaleUnitPrice", cost.SaleUnitPrice),
                     new SqlParameter("SaleAmount", cost.SaleAmount),
-                    new SqlParameter("VAT", cost.VAT),
                     new SqlParameter("Currency", cost.Currency),
                     new SqlParameter("CurrencyRate", cost.CurrencyRate),
                     new SqlParameter("CurrencyAmount", cost.CurrencyAmount)
@@ -324,13 +344,13 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 airwayInfo.Bron = Convert.ToBoolean(readerAir["Bron"].ToString());
                 airwayInfo.BronExpiryDate = Convert.ToDateTime(readerAir["BronExpiryDate"].ToString());
 
-                List<PersonAgeCount> personAgeCountsList = new();
+                List<PersonCategoryCount> personAgeCountsList = new();
                 personAgeCountsList = GetPersonAgeCount(personAgeCountsList, airwayInfo.Id, OrderOperationType.Airway);
 
                 List<PersonDetailsById> personList = new();
                 GetPersonDataById(personList, airwayInfo.Id, OrderOperationType.Airway);
 
-                airwayInfo.PersonAgeCount = personAgeCountsList;
+                airwayInfo.CategoryCount = personAgeCountsList;
                 airwayInfo.PersonDetails = personList;
             }
             readerAir.Close();
@@ -350,13 +370,13 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 hotelInfo.Bron = Convert.ToBoolean(readerHotel["Bron"].ToString());
                 hotelInfo.BronExpiryDate = Convert.ToDateTime(readerHotel["BronExpiryDate"].ToString());
 
-                List<PersonAgeCount> personAgeCountsList = new();
-                personAgeCountsList = GetPersonAgeCount(personAgeCountsList, hotelInfo.Id, OrderOperationType.Hotel);
+                List<PersonCategoryCount> roomCountsList = new();
+                roomCountsList = GetPersonAgeCount(roomCountsList, hotelInfo.Id, OrderOperationType.Hotel);
 
                 List<PersonDetailsById> personList = new();
                 GetPersonDataById(personList, hotelInfo.Id, OrderOperationType.Hotel);
 
-                hotelInfo.PersonAgeCount = personAgeCountsList;
+                hotelInfo.CategoryCount = roomCountsList;
                 hotelInfo.PersonDetails = personList;
             }
             readerHotel.Close();
@@ -371,14 +391,14 @@ namespace TRAVEL_CORE.Repositories.Concrete
             return orderInfo;
         }
 
-        private List<PersonAgeCount> GetPersonAgeCount(List<PersonAgeCount>? personAgeCountsList, int operationId, OrderOperationType operationType)
+        private List<PersonCategoryCount> GetPersonAgeCount(List<PersonCategoryCount>? personAgeCountsList, int operationId, OrderOperationType operationType)
         {
             List<SqlParameter> countParametrs = new List<SqlParameter>();
             countParametrs.Add(new SqlParameter("OperationType", operationType));
             countParametrs.Add(new SqlParameter("OperationId", operationId));
 
             var ageCountlines = connection.GetData(commandText: "CRD.SP_GetPersonAgeCategoryCount", parameters: countParametrs, commandType: CommandType.StoredProcedure);
-            return JsonConvert.DeserializeObject<List<PersonAgeCount>>(JsonConvert.SerializeObject(ageCountlines));
+            return JsonConvert.DeserializeObject<List<PersonCategoryCount>>(JsonConvert.SerializeObject(ageCountlines));
         }
 
         private void GetPersonDataById(List<PersonDetailsById> personList, int Id, OrderOperationType orderOperationType)
@@ -394,7 +414,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             {
                 PersonDetailsById personDetailsById = new();
                 personDetailsById.Id = Convert.ToInt32(readerPerson["Id"]);
-                personDetailsById.PersonAgeCategory = Convert.ToInt32(readerPerson["PersonAgeCategory"].ToString());
+                personDetailsById.Category = Convert.ToInt32(readerPerson["Category"].ToString());
                 personDetailsById.Name = readerPerson["Name"].ToString();
                 personDetailsById.Surname = readerPerson["Surname"].ToString();
                 personDetailsById.Gender = Convert.ToInt16(readerPerson["Gender"].ToString());

@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
         public short OperationId { get; set; }
-        public int PersonAgeCategory { get; set; }
+        public int Category { get; set; }
         public string? Name { get; set; }
         public string? Surname { get; set; }
         public short Gender { get; set; }

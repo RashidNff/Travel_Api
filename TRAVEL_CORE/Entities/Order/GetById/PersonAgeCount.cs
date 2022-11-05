@@ -1,8 +1,8 @@
 ﻿namespace TRAVEL_CORE.Entities.Order.GetById
 {
-    public class PersonAgeCount
+    public class PersonCategoryCount
     {
-        public int PersonAgeCategory { get; set; }
+        public int Category { get; set; }
         public int Count { get; set; }
     }
 }

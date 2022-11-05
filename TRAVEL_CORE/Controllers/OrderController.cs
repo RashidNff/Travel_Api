@@ -86,7 +86,7 @@ namespace TRAVEL_CORE.Controllers
         {
             try
             {
-                return Ok(_orderRepository.GetOrderNo());
+                return Ok(JsonConvert.SerializeObject(_orderRepository.GetOrderNo()));
             }
             catch (Exception)
             {
