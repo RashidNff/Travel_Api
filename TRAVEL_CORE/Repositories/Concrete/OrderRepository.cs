@@ -47,7 +47,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
 	                            else Convert(varchar, Air.BronExpiryDate, 105)
                             End AirwayBronExpiryDate,
                             --Hotel
-                            HotelName, EntryDate, ExitDate, GuestCount, PCOUNT RoomCount,
+                            HotelName, Convert(varchar, EntryDate, 105) EntryDate, Convert(varchar, ExitDate, 105) ExitDate, GuestCount, PCOUNT RoomCount,
                             Case 
 	                            when H.Bron = 0 then null
 	                            else Convert(varchar, H.BronExpiryDate, 105)
@@ -494,7 +494,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 orderInfo.FullName = reader["Fullname"].ToString();
                 orderInfo.BronExpiryDate = reader["BronExpiryDate"].ToString();
 
-                string message = $"<div style=\"font-size:16px\">Salam! <br/>{orderInfo.Orderdate} tarixində verilən {orderInfo.OrderNo} <a href=\"http://93.88.82.122:5067/auth/login\">here</a><br/> Username: {1}<br/>Password: {2}</div>";
+                string message = $"<div style=\"font-size:16px\">Salam! <br/>{orderInfo.Orderdate} tarixində verilən {orderInfo.OrderNo} nömrəli sifarişin bron müddətinin bitməsinə 1 gün qalıb.<br/> Sifarişi yaradan şəxs: {orderInfo.FullName}<br/>Bron bitmə tarixi: {orderInfo.BronExpiryDate}</div>";
                 CommonTools.SendEmail("matvey_214@mail.ru", "Məlumatlandırma", message);
             }
             reader.Close();
