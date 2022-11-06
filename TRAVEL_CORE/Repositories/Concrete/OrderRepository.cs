@@ -63,7 +63,8 @@ namespace TRAVEL_CORE.Repositories.Concrete
                             SUM(CurrencyAmount) AznAmount 
                             FROM OPR.ServicesCost  GROUP BY OrderId --,CurrencyRate
                             ) SC ON SC.OrderId = Ord.Id 
-                            WHERE Orderdate between @FromDate and @ToDate {stringFilter}";
+                            WHERE Orderdate between @FromDate and @ToDate {stringFilter}
+                            Order by Ord.ID desc";
 
             var data = connection.GetData(commandText: query, parameters: parameters);
             return data;
@@ -322,6 +323,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             {
                 orderInfo.Id = Convert.ToInt32(reader["Id"]);
                 orderInfo.OrderNo = reader["OrderNo"].ToString();
+                orderInfo.Orderdate = Convert.ToDateTime(reader["Orderdate"].ToString());
                 orderInfo.OrderType = Convert.ToInt16(reader["OrderType"].ToString());
                 orderInfo.FullName = reader["Fullname"].ToString();
                 orderInfo.Phone = reader["Phone"].ToString();
@@ -342,8 +344,10 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 airwayInfo.FlightClassId = Convert.ToInt32(readerAir["FlightClassId"].ToString());
                 airwayInfo.PassengersCount = Convert.ToInt32(readerAir["PassengersCount"].ToString());
                 airwayInfo.Bron = Convert.ToBoolean(readerAir["Bron"].ToString());
-                airwayInfo.BronExpiryDate = Convert.ToDateTime(readerAir["BronExpiryDate"].ToString());
 
+                if (readerAir["BronExpiryDate"].ToString() != "")
+                    airwayInfo.BronExpiryDate = Convert.ToDateTime(readerAir["BronExpiryDate"]);
+                
                 List<PersonCategoryCount> personAgeCountsList = new();
                 personAgeCountsList = GetPersonAgeCount(personAgeCountsList, airwayInfo.Id, OrderOperationType.Airway);
 
@@ -368,7 +372,9 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 hotelInfo.GuestCount = Convert.ToInt32(readerHotel["GuestCount"].ToString());
                 hotelInfo.RoomClassId = Convert.ToInt32(readerHotel["RoomClassId"].ToString());
                 hotelInfo.Bron = Convert.ToBoolean(readerHotel["Bron"].ToString());
-                hotelInfo.BronExpiryDate = Convert.ToDateTime(readerHotel["BronExpiryDate"].ToString());
+
+                if (readerHotel["BronExpiryDate"].ToString() != "")
+                    hotelInfo.BronExpiryDate = Convert.ToDateTime(readerHotel["BronExpiryDate"]);
 
                 List<PersonCategoryCount> roomCountsList = new();
                 roomCountsList = GetPersonAgeCount(roomCountsList, hotelInfo.Id, OrderOperationType.Hotel);
@@ -415,6 +421,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 PersonDetailsById personDetailsById = new();
                 personDetailsById.Id = Convert.ToInt32(readerPerson["Id"]);
                 personDetailsById.Category = Convert.ToInt32(readerPerson["Category"].ToString());
+                personDetailsById.PersonAgeName = readerPerson["PersonAgeName"].ToString();
                 personDetailsById.Name = readerPerson["Name"].ToString();
                 personDetailsById.Surname = readerPerson["Surname"].ToString();
                 personDetailsById.Gender = Convert.ToInt16(readerPerson["Gender"].ToString());

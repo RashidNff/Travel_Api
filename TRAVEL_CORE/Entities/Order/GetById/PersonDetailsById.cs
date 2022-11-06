@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public int Category { get; set; }
+        public string? PersonAgeName { get; set; }
         public string? Name { get; set; }
         public string? Surname { get; set; }
         public short Gender { get; set; }
