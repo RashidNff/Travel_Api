@@ -464,9 +464,12 @@ namespace TRAVEL_CORE.Repositories.Concrete
             var reader = connection.RunQuery(commandText: "CRD.SP_GetLastOrderNo", commandType: CommandType.StoredProcedure);
 
             if (reader.Read())
-                number = Convert.ToInt32(reader["OrderNo"].ToString()?.Split('-')[1]);
-            else
-                return "ARTW-00001";
+            {
+                if (!string.IsNullOrEmpty(reader["OrderNo"].ToString()))
+                    number = Convert.ToInt32(reader["OrderNo"].ToString()?.Split('-')[1]);
+                else
+                    return "ARTW-00001";
+            }
 
             for (int i = 0; i <= 4; i++)
             {
