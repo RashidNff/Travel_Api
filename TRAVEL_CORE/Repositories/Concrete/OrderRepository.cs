@@ -376,6 +376,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 hotelInfo.RoomClassId = Convert.ToInt32(readerHotel["RoomClassId"].ToString());
                 hotelInfo.Bron = Convert.ToBoolean(readerHotel["Bron"].ToString());
 
+                var jkwshjksf = readerHotel["BronExpiryDate"].ToString();
                 if (readerHotel["BronExpiryDate"].ToString() != "")
                     hotelInfo.BronExpiryDate = Convert.ToDateTime(readerHotel["BronExpiryDate"]);
 
