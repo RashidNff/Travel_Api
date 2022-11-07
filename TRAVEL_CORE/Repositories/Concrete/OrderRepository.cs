@@ -313,8 +313,8 @@ namespace TRAVEL_CORE.Repositories.Concrete
         public OrderInfo GetOrderById(int ordId)
         {
             OrderInfo orderInfo = new();
-            AirwayById airwayInfo = new();
-            HotelById hotelInfo = new();
+            AirwayById? airwayInfo = new();
+            HotelById? hotelInfo = new();
             
             List<SqlParameter> parameters = new List<SqlParameter>();
             parameters.Add(new SqlParameter("OrderId", ordId));
@@ -357,6 +357,9 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 airwayInfo.CategoryCount = personAgeCountsList;
                 airwayInfo.PersonDetails = personList;
             }
+            else
+                airwayInfo = null;
+
             readerAir.Close();
 
             ////////////HotelData
@@ -385,6 +388,9 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 hotelInfo.CategoryCount = roomCountsList;
                 hotelInfo.PersonDetails = personList;
             }
+            else
+                hotelInfo = null;
+
             readerHotel.Close();
 
             orderInfo.AirwayData = airwayInfo;
