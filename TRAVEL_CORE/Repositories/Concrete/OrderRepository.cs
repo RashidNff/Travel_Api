@@ -328,6 +328,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 orderInfo.FullName = reader["Fullname"].ToString();
                 orderInfo.Phone = reader["Phone"].ToString();
                 orderInfo.Email = reader["Email"].ToString();
+                var fdfdf = reader["CompanyName"].ToString();
                 orderInfo.CompanyName = reader["CompanyName"].ToString();
                 orderInfo.VOEN = reader["VOEN"].ToString();
             }
@@ -464,6 +465,8 @@ namespace TRAVEL_CORE.Repositories.Concrete
 
             if (reader.Read())
                 number = Convert.ToInt32(reader["OrderNo"].ToString()?.Split('-')[1]);
+            else
+                return "ARTW-00001";
 
             for (int i = 0; i <= 4; i++)
             {
