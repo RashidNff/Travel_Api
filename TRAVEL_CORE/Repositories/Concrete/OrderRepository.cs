@@ -328,6 +328,8 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 orderInfo.FullName = reader["Fullname"].ToString();
                 orderInfo.Phone = reader["Phone"].ToString();
                 orderInfo.Email = reader["Email"].ToString();
+                orderInfo.CompanyName = reader["CompanyName"].ToString();
+                orderInfo.VOEN = reader["VOEN"].ToString();
             }
             reader.Close();
 
