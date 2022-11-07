@@ -427,7 +427,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 personDetailsById.Gender = Convert.ToInt16(readerPerson["Gender"].ToString());
                 personDetailsById.BirthDate = Convert.ToDateTime(readerPerson["BirthDate"].ToString());
                 personDetailsById.DocType = Convert.ToInt32(readerPerson["DocType"].ToString());
-                personDetailsById.Surname = readerPerson["DocNumber"].ToString();
+                personDetailsById.DocNumber = readerPerson["DocNumber"].ToString();
                 personDetailsById.DocIssueCountry = readerPerson["DocIssueCountry"].ToString();
                 personDetailsById.DocExpireDate = Convert.ToDateTime(readerPerson["DocExpireDate"].ToString());
                 personDetailsById.DocScan = readerPerson["DocScan"].ToString();
