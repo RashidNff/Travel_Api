@@ -16,6 +16,7 @@ using System.Xml;
 using System.Text;
 using TRAVEL_CORE.Entities.TemplateCost;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using System.Globalization;
 
 namespace TRAVEL_CORE.Repositories.Concrete
 {
@@ -70,7 +71,6 @@ namespace TRAVEL_CORE.Repositories.Concrete
             return data;
         }
 
-        //test
         public int SaveOrder(SaveOrder order)
         {
             int generatedOrderId = 0;
@@ -325,7 +325,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             {
                 orderInfo.Id = Convert.ToInt32(reader["Id"]);
                 orderInfo.OrderNo = reader["OrderNo"].ToString();
-                orderInfo.Orderdate = Convert.ToDateTime(reader["Orderdate"].ToString());
+                orderInfo.Orderdate = Convert.ToDateTime(reader["Orderdate"].ToString(), CultureInfo.CreateSpecificCulture("en-GB"));
                 orderInfo.OrderType = Convert.ToInt16(reader["OrderType"].ToString());
                 orderInfo.FullName = reader["Fullname"].ToString();
                 orderInfo.Phone = reader["Phone"].ToString();
@@ -344,14 +344,15 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 airwayInfo.OrderId = Convert.ToInt32(readerAir["OrderId"].ToString());
                 airwayInfo.FromPoint = readerAir["FromPoint"].ToString();
                 airwayInfo.ToPoint = readerAir["ToPoint"].ToString();
-                airwayInfo.DepartureDate = Convert.ToDateTime(readerAir["DepartureDate"].ToString());
-                airwayInfo.ReturnDate = Convert.ToDateTime(readerAir["ReturnDate"].ToString());
+                var dgkd = readerAir["DepartureDate"].ToString();
+                airwayInfo.DepartureDate = Convert.ToDateTime(readerAir["DepartureDate"].ToString(), CultureInfo.CreateSpecificCulture("en-GB"));
+                airwayInfo.ReturnDate = Convert.ToDateTime(readerAir["ReturnDate"].ToString(), CultureInfo.CreateSpecificCulture("en-GB"));
                 airwayInfo.FlightClassId = Convert.ToInt32(readerAir["FlightClassId"].ToString());
                 airwayInfo.PassengersCount = Convert.ToInt32(readerAir["PassengersCount"].ToString());
                 airwayInfo.Bron = Convert.ToBoolean(readerAir["Bron"].ToString());
 
                 if (readerAir["BronExpiryDate"].ToString() != "")
-                    airwayInfo.BronExpiryDate = Convert.ToDateTime(readerAir["BronExpiryDate"]);
+                    airwayInfo.BronExpiryDate = Convert.ToDateTime(readerAir["BronExpiryDate"], CultureInfo.CreateSpecificCulture("en-GB"));
                 
                 List<PersonCategoryCount> personAgeCountsList = new();
                 personAgeCountsList = GetPersonAgeCount(personAgeCountsList, airwayInfo.Id, OrderOperationType.Airway);
@@ -382,7 +383,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 hotelInfo.Bron = Convert.ToBoolean(readerHotel["Bron"].ToString());
 
                 if (readerHotel["BronExpiryDate"].ToString() != "")
-                    hotelInfo.BronExpiryDate = Convert.ToDateTime(readerHotel["BronExpiryDate"]);
+                    hotelInfo.BronExpiryDate = Convert.ToDateTime(readerHotel["BronExpiryDate"], CultureInfo.CreateSpecificCulture("en-GB"));
 
                 List<PersonCategoryCount> roomCountsList = new();
                 roomCountsList = GetPersonAgeCount(roomCountsList, hotelInfo.Id, OrderOperationType.Hotel);
