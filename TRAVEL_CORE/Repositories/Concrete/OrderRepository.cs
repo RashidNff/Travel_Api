@@ -376,8 +376,8 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 hotelInfo.Id = Convert.ToInt32(readerHotel["Id"]);
                 hotelInfo.OrderId = Convert.ToInt32(readerHotel["OrderId"].ToString());
                 hotelInfo.HotelName = readerHotel["HotelName"].ToString();
-                hotelInfo.EnrtyDate = Convert.ToDateTime(readerHotel["EntryDate"].ToString());
-                hotelInfo.ExitDate = Convert.ToDateTime(readerHotel["ExitDate"].ToString());
+                hotelInfo.EnrtyDate = Convert.ToDateTime(readerHotel["EntryDate"].ToString(), CultureInfo.CreateSpecificCulture("en-GB"));
+                hotelInfo.ExitDate = Convert.ToDateTime(readerHotel["ExitDate"].ToString(), CultureInfo.CreateSpecificCulture("en-GB"));
                 hotelInfo.GuestCount = Convert.ToInt32(readerHotel["GuestCount"].ToString());
                 hotelInfo.RoomClassId = Convert.ToInt32(readerHotel["RoomClassId"].ToString());
                 hotelInfo.Bron = Convert.ToBoolean(readerHotel["Bron"].ToString());
