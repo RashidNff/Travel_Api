@@ -302,7 +302,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                     new SqlParameter("SaleUnitPrice", cost.SaleUnitPrice),
                     new SqlParameter("SaleAmount", cost.SaleAmount),
                     new SqlParameter("Currency", cost.Currency),
-                    new SqlParameter("CurrencyRate", cost.CurrencyRate),
+                    new SqlParameter("CurrencyRate", Math.Round(cost.CurrencyRate,4)),
                     new SqlParameter("CurrencyAmount", cost.CurrencyAmount)
                 };
 
