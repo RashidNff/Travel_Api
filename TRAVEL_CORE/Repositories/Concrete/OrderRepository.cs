@@ -344,7 +344,6 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 airwayInfo.OrderId = Convert.ToInt32(readerAir["OrderId"].ToString());
                 airwayInfo.FromPoint = readerAir["FromPoint"].ToString();
                 airwayInfo.ToPoint = readerAir["ToPoint"].ToString();
-                var dgkd = readerAir["DepartureDate"].ToString();
                 airwayInfo.DepartureDate = Convert.ToDateTime(readerAir["DepartureDate"].ToString(), CultureInfo.CreateSpecificCulture("en-GB"));
                 airwayInfo.ReturnDate = Convert.ToDateTime(readerAir["ReturnDate"].ToString(), CultureInfo.CreateSpecificCulture("en-GB"));
                 airwayInfo.FlightClassId = Convert.ToInt32(readerAir["FlightClassId"].ToString());
