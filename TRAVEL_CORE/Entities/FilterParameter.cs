@@ -9,6 +9,7 @@ namespace TRAVEL_CORE.Entities
     {
         public DateTime FromDate { get; set; }
         public DateTime ToDate { get; set; }
+        public int OrderStatus { get; set; }
         public List<BrowseColumnFilter>? Filters { get; set; }
     }
 }

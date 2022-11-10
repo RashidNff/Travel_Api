@@ -26,6 +26,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
 
         public DataTable GetOrderBrowseData(FilterParameter filterParameter)
         {
+            string query = "";
             string stringFilter = "";
             if (filterParameter.Filters != null)
             {
@@ -38,9 +39,10 @@ namespace TRAVEL_CORE.Repositories.Concrete
             List<SqlParameter> parameters = new List<SqlParameter>();
             parameters.Add(new SqlParameter("FromDate", filterParameter.FromDate));
             parameters.Add(new SqlParameter("ToDate", filterParameter.ToDate));
+            parameters.Add(new SqlParameter("OrderStatus", filterParameter.OrderStatus));
 
-
-            var query = $@"Select OrderNo,Ord.ID,
+            if (filterParameter.OrderStatus == 0)
+                query = $@"Select OrderNo,Ord.ID,
                             --AirWay
                             CompanyName, FullName, Phone, FromPoint, ToPoint, Convert(varchar, DepartureDate, 105) DepartureDate, Convert(varchar, ReturnDate, 105) ReturnDate, PassengersCount,
                             Case 
@@ -55,10 +57,15 @@ namespace TRAVEL_CORE.Repositories.Concrete
                             End HotelBronExpiryDate,
                             Convert(varchar, Orderdate, 105) Orderdate,
                             Sc.SaleAmount,SC.AznAmount,
-                            Ord.Status
+                            CASE
+								when Ord.Status = 3 then S.Value1
+								else Cast(Ord.Status as nvarchar(20))
+							END
+                            Status
                             from OPR.Orders Ord
                             Left Join  OPR.Airways Air ON Air.OrderId = Ord.Id and Air.Status = 1
                             Left Join  OPR.Hotels H ON H.OrderId = Ord.Id and H.Status = 1
+                            Left Join  OBJ.SpeCodes S ON S.RefId = Ord.Status and S.Type = 'OrderStatus' and S.Status = 1
                             Left Join  (SELECT OperationId,COUNT(*) PCOUNT FROM CRD.PersonDetails WHERE OperationType=2 GROUP BY OperationId) P ON p.OperationId = H.Id 
                             Left Join  (SELECT OrderId,SUM(SaleAmount) SaleAmount,--CurrencyRate rate,
                             SUM(CurrencyAmount) AznAmount 
@@ -66,6 +73,39 @@ namespace TRAVEL_CORE.Repositories.Concrete
                             ) SC ON SC.OrderId = Ord.Id 
                             WHERE Orderdate between @FromDate and @ToDate {stringFilter}
                             Order by Ord.ID desc";
+            else
+                query = $@"Select OrderNo,Ord.ID,
+                            --AirWay
+                            CompanyName, FullName, Phone, FromPoint, ToPoint, Convert(varchar, DepartureDate, 105) DepartureDate, Convert(varchar, ReturnDate, 105) ReturnDate, PassengersCount,
+                            Case 
+	                            when Air.Bron = 0  then null
+	                            else Convert(varchar, Air.BronExpiryDate, 105)
+                            End AirwayBronExpiryDate,
+                            --Hotel
+                            HotelName, Convert(varchar, EntryDate, 105) EntryDate, Convert(varchar, ExitDate, 105) ExitDate, GuestCount, PCOUNT RoomCount,
+                            Case 
+	                            when H.Bron = 0 then null
+	                            else Convert(varchar, H.BronExpiryDate, 105)
+                            End HotelBronExpiryDate,
+                            Convert(varchar, Orderdate, 105) Orderdate,
+                            Sc.SaleAmount,SC.AznAmount,
+                            CASE
+								when Ord.Status = 3 then S.Value1
+								else Cast(Ord.Status as nvarchar(20))
+							END
+                            Status
+                            from OPR.Orders Ord
+                            Left Join  OPR.Airways Air ON Air.OrderId = Ord.Id and Air.Status = 1
+                            Left Join  OPR.Hotels H ON H.OrderId = Ord.Id and H.Status = 1
+                            Left Join  OBJ.SpeCodes S ON S.RefId = Ord.Status and S.Type = 'OrderStatus' and S.Status = 1
+                            Left Join  (SELECT OperationId,COUNT(*) PCOUNT FROM CRD.PersonDetails WHERE OperationType=2 GROUP BY OperationId) P ON p.OperationId = H.Id 
+                            Left Join  (SELECT OrderId,SUM(SaleAmount) SaleAmount,--CurrencyRate rate,
+                            SUM(CurrencyAmount) AznAmount 
+                            FROM OPR.ServicesCost  GROUP BY OrderId --,CurrencyRate
+                            ) SC ON SC.OrderId = Ord.Id 
+                            WHERE Orderdate between @FromDate and @ToDate and Ord.Status = @OrderStatus {stringFilter}
+                            Order by Ord.ID desc";
+
 
             var data = connection.GetData(commandText: query, parameters: parameters);
             return data;
