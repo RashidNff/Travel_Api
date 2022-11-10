@@ -16,6 +16,7 @@ using System.Xml;
 using System.Text;
 using TRAVEL_CORE.Entities.TemplateCost;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using System.Globalization;
 
 namespace TRAVEL_CORE.Repositories.Concrete
 {
@@ -63,7 +64,8 @@ namespace TRAVEL_CORE.Repositories.Concrete
                             SUM(CurrencyAmount) AznAmount 
                             FROM OPR.ServicesCost  GROUP BY OrderId --,CurrencyRate
                             ) SC ON SC.OrderId = Ord.Id 
-                            WHERE Orderdate between @FromDate and @ToDate {stringFilter}";
+                            WHERE Orderdate between @FromDate and @ToDate {stringFilter}
+                            Order by Ord.ID desc";
 
             var data = connection.GetData(commandText: query, parameters: parameters);
             return data;
@@ -305,7 +307,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                     new SqlParameter("SaleUnitPrice", cost.SaleUnitPrice),
                     new SqlParameter("SaleAmount", cost.SaleAmount),
                     new SqlParameter("Currency", cost.Currency),
-                    new SqlParameter("CurrencyRate", cost.CurrencyRate),
+                    new SqlParameter("CurrencyRate", Math.Round(cost.CurrencyRate,4)),
                     new SqlParameter("CurrencyAmount", cost.CurrencyAmount)
                 };
 
@@ -314,11 +316,12 @@ namespace TRAVEL_CORE.Repositories.Concrete
             
         }
 
+        
         public OrderInfo GetOrderById(int ordId)
         {
             OrderInfo orderInfo = new();
-            AirwayById airwayInfo = new();
-            HotelById hotelInfo = new();
+            AirwayById? airwayInfo = new();
+            HotelById? hotelInfo = new();
             
             List<SqlParameter> parameters = new List<SqlParameter>();
             parameters.Add(new SqlParameter("OrderId", ordId));
@@ -327,10 +330,14 @@ namespace TRAVEL_CORE.Repositories.Concrete
             {
                 orderInfo.Id = Convert.ToInt32(reader["Id"]);
                 orderInfo.OrderNo = reader["OrderNo"].ToString();
+                orderInfo.Orderdate = Convert.ToDateTime(reader["Orderdate"].ToString(), CultureInfo.CreateSpecificCulture("en-GB"));
                 orderInfo.OrderType = Convert.ToInt16(reader["OrderType"].ToString());
                 orderInfo.FullName = reader["Fullname"].ToString();
                 orderInfo.Phone = reader["Phone"].ToString();
                 orderInfo.Email = reader["Email"].ToString();
+                var fdfdf = reader["CompanyName"].ToString();
+                orderInfo.CompanyName = reader["CompanyName"].ToString();
+                orderInfo.VOEN = reader["VOEN"].ToString();
             }
             reader.Close();
 
@@ -342,13 +349,15 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 airwayInfo.OrderId = Convert.ToInt32(readerAir["OrderId"].ToString());
                 airwayInfo.FromPoint = readerAir["FromPoint"].ToString();
                 airwayInfo.ToPoint = readerAir["ToPoint"].ToString();
-                airwayInfo.DepartureDate = Convert.ToDateTime(readerAir["DepartureDate"].ToString());
-                airwayInfo.ReturnDate = Convert.ToDateTime(readerAir["ReturnDate"].ToString());
+                airwayInfo.DepartureDate = Convert.ToDateTime(readerAir["DepartureDate"].ToString(), CultureInfo.CreateSpecificCulture("en-GB"));
+                airwayInfo.ReturnDate = Convert.ToDateTime(readerAir["ReturnDate"].ToString(), CultureInfo.CreateSpecificCulture("en-GB"));
                 airwayInfo.FlightClassId = Convert.ToInt32(readerAir["FlightClassId"].ToString());
                 airwayInfo.PassengersCount = Convert.ToInt32(readerAir["PassengersCount"].ToString());
                 airwayInfo.Bron = Convert.ToBoolean(readerAir["Bron"].ToString());
-                airwayInfo.BronExpiryDate = Convert.ToDateTime(readerAir["BronExpiryDate"].ToString());
 
+                if (readerAir["BronExpiryDate"].ToString() != "")
+                    airwayInfo.BronExpiryDate = Convert.ToDateTime(readerAir["BronExpiryDate"], CultureInfo.CreateSpecificCulture("en-GB"));
+                
                 List<PersonCategoryCount> personAgeCountsList = new();
                 personAgeCountsList = GetPersonAgeCount(personAgeCountsList, airwayInfo.Id, OrderOperationType.Airway);
 
@@ -358,6 +367,9 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 airwayInfo.CategoryCount = personAgeCountsList;
                 airwayInfo.PersonDetails = personList;
             }
+            else
+                airwayInfo = null;
+
             readerAir.Close();
 
             ////////////HotelData
@@ -368,12 +380,14 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 hotelInfo.Id = Convert.ToInt32(readerHotel["Id"]);
                 hotelInfo.OrderId = Convert.ToInt32(readerHotel["OrderId"].ToString());
                 hotelInfo.HotelName = readerHotel["HotelName"].ToString();
-                hotelInfo.EnrtyDate = Convert.ToDateTime(readerHotel["EntryDate"].ToString());
-                hotelInfo.ExitDate = Convert.ToDateTime(readerHotel["ExitDate"].ToString());
+                hotelInfo.EnrtyDate = Convert.ToDateTime(readerHotel["EntryDate"].ToString(), CultureInfo.CreateSpecificCulture("en-GB"));
+                hotelInfo.ExitDate = Convert.ToDateTime(readerHotel["ExitDate"].ToString(), CultureInfo.CreateSpecificCulture("en-GB"));
                 hotelInfo.GuestCount = Convert.ToInt32(readerHotel["GuestCount"].ToString());
                 hotelInfo.RoomClassId = Convert.ToInt32(readerHotel["RoomClassId"].ToString());
                 hotelInfo.Bron = Convert.ToBoolean(readerHotel["Bron"].ToString());
-                hotelInfo.BronExpiryDate = Convert.ToDateTime(readerHotel["BronExpiryDate"].ToString());
+
+                if (readerHotel["BronExpiryDate"].ToString() != "")
+                    hotelInfo.BronExpiryDate = Convert.ToDateTime(readerHotel["BronExpiryDate"], CultureInfo.CreateSpecificCulture("en-GB"));
 
                 List<PersonCategoryCount> roomCountsList = new();
                 roomCountsList = GetPersonAgeCount(roomCountsList, hotelInfo.Id, OrderOperationType.Hotel);
@@ -384,6 +398,9 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 hotelInfo.CategoryCount = roomCountsList;
                 hotelInfo.PersonDetails = personList;
             }
+            else
+                hotelInfo = null;
+
             readerHotel.Close();
 
             orderInfo.AirwayData = airwayInfo;
@@ -420,12 +437,13 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 PersonDetailsById personDetailsById = new();
                 personDetailsById.Id = Convert.ToInt32(readerPerson["Id"]);
                 personDetailsById.Category = Convert.ToInt32(readerPerson["Category"].ToString());
+                personDetailsById.PersonAgeName = readerPerson["PersonAgeName"].ToString();
                 personDetailsById.Name = readerPerson["Name"].ToString();
                 personDetailsById.Surname = readerPerson["Surname"].ToString();
                 personDetailsById.Gender = Convert.ToInt16(readerPerson["Gender"].ToString());
                 personDetailsById.BirthDate = Convert.ToDateTime(readerPerson["BirthDate"].ToString());
                 personDetailsById.DocType = Convert.ToInt32(readerPerson["DocType"].ToString());
-                personDetailsById.Surname = readerPerson["DocNumber"].ToString();
+                personDetailsById.DocNumber = readerPerson["DocNumber"].ToString();
                 personDetailsById.DocIssueCountry = readerPerson["DocIssueCountry"].ToString();
                 personDetailsById.DocExpireDate = Convert.ToDateTime(readerPerson["DocExpireDate"].ToString());
                 personDetailsById.DocScan = readerPerson["DocScan"].ToString();
@@ -453,7 +471,12 @@ namespace TRAVEL_CORE.Repositories.Concrete
             var reader = connection.RunQuery(commandText: "CRD.SP_GetLastOrderNo", commandType: CommandType.StoredProcedure);
 
             if (reader.Read())
-                number = Convert.ToInt32(reader["OrderNo"].ToString()?.Split('-')[1]);
+            {
+                if (!string.IsNullOrEmpty(reader["OrderNo"].ToString()))
+                    number = Convert.ToInt32(reader["OrderNo"].ToString()?.Split('-')[1]);
+                else
+                    return "ARTW-00001";
+            }
 
             for (int i = 0; i <= 4; i++)
             {

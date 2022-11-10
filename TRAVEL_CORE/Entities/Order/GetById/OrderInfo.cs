@@ -6,6 +6,8 @@
         public string? OrderNo { get; set; }
         public short OrderType { get; set; }
         public DateTime Orderdate { get; set; }
+        public string? CompanyName { get; set; }
+        public string? VOEN { get; set; }
         public string? FullName { get; set; }
         public string? Phone { get; set; }
         public string? Email { get; set; }

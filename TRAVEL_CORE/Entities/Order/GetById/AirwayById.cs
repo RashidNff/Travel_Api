@@ -11,7 +11,7 @@
         public int FlightClassId { get; set; }
         public int PassengersCount { get; set; }
         public Boolean Bron { get; set; }
-        public DateTime BronExpiryDate { get; set; }
+        public DateTime? BronExpiryDate { get; set; }
         public List<PersonCategoryCount>? CategoryCount { get; set; }
 
         public List<PersonDetailsById>? PersonDetails { get; set; }
