@@ -355,7 +355,6 @@ namespace TRAVEL_CORE.Repositories.Concrete
             
         }
 
-        
         public OrderInfo GetOrderById(int ordId)
         {
             OrderInfo orderInfo = new();
@@ -564,7 +563,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 orderInfo.BronExpiryDate = reader["BronExpiryDate"].ToString();
 
                 string message = $"<div style=\"font-size:16px\">Salam, {orderInfo.FullName}! <br/><br/>{orderInfo.Orderdate} tarixində verilən <b>{orderInfo.OrderNo} </b> nömrəli sifarişin bron müddətinin bitməsinə 1 gün qalıb.<br/><br/><br/> <b style=\"margin-right:40px\">Əməliyyatın tipi:</b> {orderInfo.OperationType}<br/><b style=\"margin-right:30px\">Bron bitmə tarixi:</b> {orderInfo.BronExpiryDate}<br/> <b>Ətraflı məlumat üçün əlaqə:</b> 055 555 55 55<br/></div>";
-                CommonTools.SendEmail("shahin.mustafayev@uniser.az", "Məlumatlandırma", message);
+                CommonTools.SendEmail(orderInfo.Email, "Məlumatlandırma", message);
             }
             reader.Close();
         }
