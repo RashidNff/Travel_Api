@@ -29,7 +29,6 @@ namespace TRAVEL_CORE.Controllers
         /// </summary>
         /// <param name="filterParameter"></param>
         /// <returns></returns>
-        [AllowAnonymous]
         [HttpPost]
         public IActionResult GetOrderBrowseData(FilterParameter filterParameter)
         {
@@ -44,7 +43,6 @@ namespace TRAVEL_CORE.Controllers
         }
 
 
-        [AllowAnonymous]
         [HttpPost]
         public IActionResult SaveOrder(SaveOrder order)
         {
@@ -64,7 +62,6 @@ namespace TRAVEL_CORE.Controllers
             return Ok(new { orderId = orderId });
         }
 
-        [AllowAnonymous]
         [HttpGet]
         public IActionResult GetOrderById(int orderId)
         {
@@ -100,7 +97,6 @@ namespace TRAVEL_CORE.Controllers
         /// </summary>
         /// <param name="templateCost"></param>
         /// <returns></returns>
-        [AllowAnonymous]
         [HttpGet]
         public IActionResult GetTemplateCostData(int templateCostId)
         {
@@ -120,7 +116,6 @@ namespace TRAVEL_CORE.Controllers
         /// </summary>
         /// <param name=""></param>
         /// <returns></returns>
-        [AllowAnonymous]
         [HttpPut]
         public IActionResult ChangeOrderStatus(ChangeStatus model)
         {
@@ -135,7 +130,6 @@ namespace TRAVEL_CORE.Controllers
             return NoContent();
         }
 
-        [AllowAnonymous]
         [HttpGet]
         public IActionResult SendMail()
         {

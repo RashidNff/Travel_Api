@@ -27,7 +27,6 @@ namespace TRAVEL_CORE.Controllers
         /// </summary>
         /// <param name="filterParameter"></param>
         /// <returns></returns>
-        [AllowAnonymous]
         [HttpPost]
         public IActionResult GetTemplateCostBrowseData(TempCostFilterParametr filterParametr)
         {
@@ -46,7 +45,6 @@ namespace TRAVEL_CORE.Controllers
         /// </summary>
         /// <param name="filterParameter"></param>
         /// <returns></returns>
-        [AllowAnonymous]
         [HttpPost]
         public IActionResult SaveTemplateCost(TemplateCost templateCosts)
         {
@@ -69,7 +67,6 @@ namespace TRAVEL_CORE.Controllers
         /// </summary>
         /// <param name=""></param>
         /// <returns></returns>
-        [AllowAnonymous]
         [HttpGet]
         public IActionResult GetTemplateCostById(int templateCostId)
         {
@@ -88,7 +85,6 @@ namespace TRAVEL_CORE.Controllers
         /// </summary>
         /// <param name=""></param>
         /// <returns></returns>
-        [AllowAnonymous]
         [HttpPut]
         public IActionResult ChangeTemplateCostStatus(ChangeStatus model)
         {
