@@ -100,7 +100,9 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 SaveHotelData(order.HotelData, generatedOrderId);
             else
                 DeleteHotelData(generatedOrderId);
-            
+
+
+            DeleteCostData(generatedOrderId);
             if (order.CostData.Count != 0)
                 SaveCostData(order.CostData, generatedOrderId);
 
@@ -108,7 +110,10 @@ namespace TRAVEL_CORE.Repositories.Concrete
             return generatedOrderId;
         }
 
-
+        private void DeleteCostData(int generatedOrderId)
+        {
+            connection.Execute(tableName: "OPR.ServicesCost", operation: OperationType.Delete, fieldName: "Id", ID: generatedOrderId);
+        }
 
         private void SaveAirwayData(Airway airwayModel, int orderId)
         {
