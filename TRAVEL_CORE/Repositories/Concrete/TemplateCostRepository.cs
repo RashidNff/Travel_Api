@@ -22,7 +22,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             List<SqlParameter> Parameters = new List<SqlParameter>();
             Parameters.Add(new SqlParameter("Status", status));
 
-            var data = connection.GetData(commandText: "CRD.SP_GetTemplateCostBrowseData", commandType: CommandType.StoredProcedure);
+            var data = connection.GetData(commandText: "CRD.SP_GetTemplateCostBrowseData", parameters: Parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
 
