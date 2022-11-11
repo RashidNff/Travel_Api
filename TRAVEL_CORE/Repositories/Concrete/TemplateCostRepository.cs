@@ -23,6 +23,11 @@ namespace TRAVEL_CORE.Repositories.Concrete
             return data;
         }
 
+        public DataTable GetExpences(int templateCostId)
+        {
+            throw new NotImplementedException();
+        }
+
         public TemplateCost GetTemplateCostById(int templateCostId)
         {
             TemplateCost templateCosts = new();
@@ -103,5 +108,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             parameters.Add(new SqlParameter("Status", model.Status));
             connection.RunQuery(commandText: "SP_CHANGESTATUS", parameters: parameters, commandType: CommandType.StoredProcedure);
         }
+
+
     }
 }

@@ -25,14 +25,32 @@ namespace TRAVEL_CORE.Controllers
         /// <summary>
         /// Get Template Cost Data
         /// </summary>
-        /// <param name="filterParameter"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpGet]
         public IActionResult GetTemplateCostBrowseData()
         {
             try
             {
                 return Ok(JsonConvert.SerializeObject(_templateCostRepository.GetTemplateCostBrowseData()));
+            }
+            catch (Exception)
+            {
+                return BadRequest(new { message = "Unexpected error occurred!" });
+            }
+        }
+
+
+        /// <summary>
+        /// Send 
+        /// </summary>
+        /// <param name="templateCostId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult GetTemplateCostBrowseData(int templateCostId)
+        {
+            try
+            {
+                return Ok(JsonConvert.SerializeObject(_templateCostRepository.GetExpences(templateCostId)));
             }
             catch (Exception)
             {

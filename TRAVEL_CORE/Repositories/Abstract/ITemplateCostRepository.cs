@@ -8,6 +8,7 @@ namespace TRAVEL_CORE.Repositories.Abstract
     public interface ITemplateCostRepository
     {
         DataTable GetTemplateCostBrowseData();
+        DataTable GetExpences(int templateCostId);
         TemplateCost GetTemplateCostById(int templateCostId);
         int SaveTemplateCost(TemplateCost templateCosts);
         void ChangeTemplateCostStatus(ChangeStatus model);
