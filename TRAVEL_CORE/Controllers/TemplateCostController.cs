@@ -28,11 +28,11 @@ namespace TRAVEL_CORE.Controllers
         /// <param name="filterParameter"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult GetTemplateCostBrowseData(TempCostFilterParametr filterParametr)
+        public IActionResult GetTemplateCostBrowseData()
         {
             try
             {
-                return Ok(JsonConvert.SerializeObject(_templateCostRepository.GetTemplateCostBrowseData(filterParametr)));
+                return Ok(JsonConvert.SerializeObject(_templateCostRepository.GetTemplateCostBrowseData()));
             }
             catch (Exception)
             {

@@ -17,24 +17,9 @@ namespace TRAVEL_CORE.Repositories.Concrete
     {
         Connection connection = new Connection();
 
-        public DataTable GetTemplateCostBrowseData(TempCostFilterParametr filterParameter)
+        public DataTable GetTemplateCostBrowseData()
         {
-            string stringFilter = "";
-            if (filterParameter.Filters != null)
-            {
-                foreach (var filter in filterParameter.Filters)
-                {
-                    stringFilter += $"and {filter.Key} Like N'%{filter.Value}%'";
-                }
-            }
-
-            var query = $@"Select T.Id, T.Name, Vender, S.Value1 VenderService, Qty, VenderUnitPrice, VenderAmount, SaleUnitPrice, SaleAmount, Vat, S2.Value1 Currency, Round(CurrencyRate,4) CurrencyRate, CurrencyAmount from OPR.TemplateCost T
-                            LEFT JOIN OPR.TemplateCostLines TL ON TL.TemplateCostId = T.Id
-                            JOIN OBJ.SpeCodes S ON S.Refid = VenderService and S.Type = 'VenderService' and S.Status = 1
-                            JOIN OBJ.SpeCodes S2 ON S2.Refid = Currency and S2.Type = 'Currency' and S2.Status = 1
-                            Where T.Status = 1 {stringFilter}";
-
-            var data = connection.GetData(commandText: query);
+            var data = connection.GetData(commandText: "CRD.SP_GetTemplateCostBrowseData", commandType: CommandType.StoredProcedure);
             return data;
         }
 
