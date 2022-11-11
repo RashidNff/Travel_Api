@@ -2,8 +2,6 @@
 {
     public class ServicesCost
     {
-        public int Id { get; set; }
-        public int OrderId { get; set; }
         public string? Vender { get; set; }
         public int VenderService { get; set; }
         public int Qty { get; set; }
