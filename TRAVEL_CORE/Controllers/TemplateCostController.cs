@@ -26,11 +26,11 @@ namespace TRAVEL_CORE.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public IActionResult GetTemplateCostBrowseData()
+        public IActionResult GetTemplateCostBrowseData(int status)
         {
             try
             {
-                return Ok(JsonConvert.SerializeObject(_templateCostRepository.GetTemplateCostBrowseData()));
+                return Ok(JsonConvert.SerializeObject(_templateCostRepository.GetTemplateCostBrowseData(status)));
             }
             catch (Exception)
             {

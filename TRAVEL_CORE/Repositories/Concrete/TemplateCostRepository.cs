@@ -17,8 +17,11 @@ namespace TRAVEL_CORE.Repositories.Concrete
     {
         Connection connection = new Connection();
 
-        public DataTable GetTemplateCostBrowseData()
+        public DataTable GetTemplateCostBrowseData(int status)
         {
+            List<SqlParameter> Parameters = new List<SqlParameter>();
+            Parameters.Add(new SqlParameter("Status", status));
+
             var data = connection.GetData(commandText: "CRD.SP_GetTemplateCostBrowseData", commandType: CommandType.StoredProcedure);
             return data;
         }
