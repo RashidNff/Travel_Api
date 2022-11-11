@@ -106,6 +106,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                             WHERE Orderdate between @FromDate and @ToDate and Ord.Status = @OrderStatus {stringFilter}
                             Order by Ord.ID desc";
 
+            SendMail();
 
             var data = connection.GetData(commandText: query, parameters: parameters);
             return data;
