@@ -9,7 +9,6 @@
         public decimal VenderAmount { get; set; }
         public decimal SaleUnitPrice { get; set; }
         public decimal SaleAmount { get; set; }
-        public decimal VAT { get; set; }
         public int Currency { get; set; }
         public float CurrencyRate { get; set; }
         public decimal CurrencyAmount { get; set; }

@@ -97,7 +97,6 @@ namespace TRAVEL_CORE.Repositories.Concrete
                     new SqlParameter("VenderAmount", templateCost.VenderAmount),
                     new SqlParameter("SaleUnitPrice", templateCost.SaleUnitPrice),
                     new SqlParameter("SaleAmount", templateCost.SaleAmount),
-                    new SqlParameter("VAT", templateCost.VAT),
                     new SqlParameter("Currency", templateCost.Currency),
                     new SqlParameter("CurrencyRate", templateCost.CurrencyRate),
                     new SqlParameter("CurrencyAmount", templateCost.CurrencyAmount)
