@@ -21,9 +21,8 @@ namespace TRAVEL_CORE.Controllers
             _templateCostRepository = templateCostRepository;
         }
 
-
         /// <summary>
-        /// Get Template Cost Data
+        /// Get Template Cost browse data
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -39,14 +38,13 @@ namespace TRAVEL_CORE.Controllers
             }
         }
 
-
         /// <summary>
-        /// Send 
+        /// Get Expence Names by Id
         /// </summary>
         /// <param name="templateCostId"></param>
         /// <returns></returns>
         [HttpGet]
-        public IActionResult GetTemplateCostBrowseData(int templateCostId)
+        public IActionResult GetExpences(int templateCostId)
         {
             try
             {

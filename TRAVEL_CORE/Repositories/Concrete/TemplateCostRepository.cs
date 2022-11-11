@@ -25,7 +25,11 @@ namespace TRAVEL_CORE.Repositories.Concrete
 
         public DataTable GetExpences(int templateCostId)
         {
-            throw new NotImplementedException();
+            List<SqlParameter> Parameters = new List<SqlParameter>();
+            Parameters.Add(new SqlParameter("TemplateCostId", templateCostId));
+
+            var data = connection.GetData(commandText: "CRD.SP_GetExpencesByTemplateCostId", parameters: Parameters, commandType: CommandType.StoredProcedure);
+            return data;
         }
 
         public TemplateCost GetTemplateCostById(int templateCostId)
