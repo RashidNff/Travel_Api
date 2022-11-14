@@ -17,6 +17,7 @@ using System.Text;
 using TRAVEL_CORE.Entities.TemplateCost;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using System.Globalization;
+using System.Security.Cryptography;
 
 namespace TRAVEL_CORE.Repositories.Concrete
 {
@@ -569,6 +570,16 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 orderInfo.Email = reader["Email"].ToString();
                 orderInfo.OperationType = reader["OperationType"].ToString();
                 orderInfo.BronExpiryDate = reader["BronExpiryDate"].ToString();
+                orderInfo.AirId = Convert.ToInt32(reader["AirId"]);
+                orderInfo.HotelId = Convert.ToInt32(reader["HotelId"]);
+
+                List<SqlParameter> Parameters = new List<SqlParameter>();
+                Parameters.Add(new SqlParameter("EmailStatus", 1));
+
+                if (orderInfo.AirId != 0)
+                    connection.Execute(tableName: "OPR.Airways", operation: OperationType.Update, fieldName: "Id", ID: orderInfo.AirId, parameters: Parameters);
+                if (orderInfo.HotelId != 0)
+                    connection.Execute(tableName: "OPR.Hotels", operation: OperationType.Update, fieldName: "Id", ID: orderInfo.HotelId, parameters: Parameters);
 
                 string message = $"<div style=\"font-size:16px\">Salam, {orderInfo.FullName}! <br/><br/>{orderInfo.Orderdate} tarixində verilən <b>{orderInfo.OrderNo} </b> nömrəli sifarişin bron müddətinin bitməsinə 1 gün qalıb.<br/><br/><br/> <b style=\"margin-right:40px\">Əməliyyatın tipi:</b> {orderInfo.OperationType}<br/><b style=\"margin-right:30px\">Bron bitmə tarixi:</b> {orderInfo.BronExpiryDate}<br/> <b>Ətraflı məlumat üçün əlaqə:</b> 055 555 55 55<br/></div>";
                 CommonTools.SendEmail(orderInfo.Email, "Məlumatlandırma", message);

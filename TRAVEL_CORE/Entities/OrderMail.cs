@@ -8,5 +8,7 @@
         public string Email { get; set; }
         public string OperationType { get; set; }
         public string BronExpiryDate { get; set; }
+        public int AirId { get; set; }
+        public int HotelId { get; set; }
     }
 }
