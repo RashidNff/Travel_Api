@@ -1,4 +1,6 @@
-﻿namespace TRAVEL_CORE.Entities.Contract
+﻿using System.Text.Json.Serialization;
+
+namespace TRAVEL_CORE.Entities.Contract
 {
     public class SaveContract
     {
@@ -7,5 +9,7 @@
         public string? ContractNo { get; set; }
         public DateTime? BeginDate { get; set; }
         public DateTime? EndDate { get; set; }
+        [JsonIgnore]
+        public int CreatedBy { get; set; }
     }
 }

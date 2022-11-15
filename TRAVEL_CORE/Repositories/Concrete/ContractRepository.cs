@@ -1,7 +1,9 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
+using System.Text;
 using TRAVEL_CORE.DAL;
 using TRAVEL_CORE.Entities;
+using TRAVEL_CORE.Entities.Contract;
 using TRAVEL_CORE.Entities.TemplateCost;
 using TRAVEL_CORE.Repositories.Abstract;
 
@@ -29,24 +31,24 @@ namespace TRAVEL_CORE.Repositories.Concrete
             parameters.Add(new SqlParameter("OrderStatus", filterParameter.OrderStatus));
 
             if (filterParameter.OrderStatus == 0)
-                query = $@"Select C.Id, ContractNo, CL.CompanyName, Convert(varchar, C.BeginDate, 105) BeginDate, Convert(varchar, C.EndDate, 105) EndDate, 
+                query = $@"Select C.Id, ContractNo, F.CompanyName, Convert(varchar, C.BeginDate, 105) BeginDate, Convert(varchar, C.EndDate, 105) EndDate, 
                             CASE
 	                            when C.Status = 3 then S.Value1
 	                            else Cast(C.Status as nvarchar(20))
                             END
                             Status, S.ColorCode, Convert(varchar, C.CreatedDate, 105) CreatedDate  from CRD.Contract C
-                            Left JOIN CRD.Client CL ON CL.Id = C.ClientId and Cl.Status = 1
+                            Left JOIN CRD.Firms F ON F.Id = C.ClientId and F.Status = 1
                             Left Join  OBJ.SpeCodes S ON S.RefId = C.Status and S.Type = 'OrderStatus' and S.Status = 1
                             WHERE C.CreatedDate between @FromDate and @ToDate {stringFilter}
                             Order by C.Id DESC";
             else
-                query = $@"Select C.Id, ContractNo, CL.CompanyName, Convert(varchar, C.BeginDate, 105) BeginDate, Convert(varchar, C.EndDate, 105) EndDate, 
+                query = $@"Select C.Id, ContractNo, F.CompanyName, Convert(varchar, C.BeginDate, 105) BeginDate, Convert(varchar, C.EndDate, 105) EndDate, 
                             CASE
 	                            when C.Status = 3 then S.Value1
 	                            else Cast(C.Status as nvarchar(20))
                             END
                             Status, S.ColorCode, Convert(varchar, C.CreatedDate, 105) CreatedDate  from CRD.Contract C
-                            Left JOIN CRD.Client CL ON CL.Id = C.ClientId and Cl.Status = 1
+                            Left JOIN CRD.Firms F ON F.Id = C.ClientId and F.Status = 1
                             Left Join  OBJ.SpeCodes S ON S.RefId = C.Status and S.Type = 'OrderStatus' and S.Status = 1
                             WHERE C.CreatedDate between @FromDate and @ToDate and C.Status = @OrderStatus {stringFilter}
                             Order by C.Id DESC";
@@ -55,9 +57,58 @@ namespace TRAVEL_CORE.Repositories.Concrete
             return data;
         }
 
-        public int SaveTemplateCost(TemplateCost templateCosts)
+        public int SaveContract(SaveContract saveContract)
         {
-            throw new NotImplementedException();
+            int generatedId = 0;
+            List<SqlParameter> parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("ClientId", saveContract.ClientId),
+                    new SqlParameter("ContractNo", saveContract.ContractNo),
+                    new SqlParameter("BeginDate", saveContract.BeginDate),
+                    new SqlParameter("EndDate", saveContract.EndDate)
+                };
+
+            if (saveContract.Id != 0)
+                generatedId = connection.Execute(tableName: "CRD.Contract", operation: OperationType.Update, fieldName: "Id", ID: saveContract.Id, parameters: parameters);
+            else
+                generatedId = connection.Execute(tableName: "CRD.Contract", operation: OperationType.Insert, parameters: parameters);
+
+            return generatedId;
         }
+
+        public string GetContractNo()
+        {
+            StringBuilder formatString = new();
+            int number = 0;
+            string prefix = $"{DateTime.Now.ToString("yy")}/";
+            var reader = connection.RunQuery(commandText: "CRD.SP_GetLastContractNo", commandType: CommandType.StoredProcedure);
+
+            if (reader.Read())
+            {
+                if (!string.IsNullOrEmpty(reader["ContractNo"].ToString()))
+                    number = Convert.ToInt32(reader["ContractNo"].ToString()?.Substring((int)reader["ContractNo"].ToString().IndexOf("/") + 1, 3));
+                else
+                    return $"{DateTime.Now.ToString("yy")}/001-MLT";
+            }
+
+            for (int i = 0; i <= 2; i++)
+            {
+                formatString.Append("0");
+            }
+
+            string formattedNumber = (number + 1).ToString(formatString.ToString());
+
+            return $"{prefix}{formattedNumber}-MLT";
+        }
+
+        public void ChangeOrderStatus(ChangeStatus model)
+        {
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            parameters.Add(new SqlParameter("TableName", "CRD.Contract"));
+            parameters.Add(new SqlParameter("Id", model.Id));
+            parameters.Add(new SqlParameter("Status", model.Status));
+            connection.RunQuery(commandText: "SP_CHANGESTATUS", parameters: parameters, commandType: CommandType.StoredProcedure);
+        }
+
     }
 }

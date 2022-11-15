@@ -75,10 +75,6 @@ namespace TRAVEL_CORE.Controllers
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
         [HttpGet]
         public IActionResult GetOrderNo()
         {
