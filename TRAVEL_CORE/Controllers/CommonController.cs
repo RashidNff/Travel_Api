@@ -77,6 +77,24 @@ namespace TRAVEL_CORE.Controllers
             }
         }
 
+        /// <summary>
+        /// Get Firms Id And Text
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult GetFirms()
+        {
+            try
+            {
+                return Ok(JsonConvert.SerializeObject(_commonRepository.GetFirms()));
+
+            }
+            catch (Exception)
+            {
+                return BadRequest(new { message = "Unexpected error occurred!" });
+            }
+        }
+
     }
 
 }
