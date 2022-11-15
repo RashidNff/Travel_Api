@@ -30,6 +30,7 @@ builder.Services.AddScoped<ITemplateCostRepository, TemplateCostRepository>();
 builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 builder.Services.AddScoped<IContractRepository, ContractRepository>();
 builder.Services.AddScoped<IFirmRepository, FirmRepository>();
+builder.Services.AddScoped<IPersonRepository, PersonRepository>();
 
 builder.Services.AddSwaggerGen(opt =>
 {

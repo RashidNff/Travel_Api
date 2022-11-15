@@ -27,7 +27,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             List<SqlParameter> parameters = new List<SqlParameter>();
             parameters.Add(new SqlParameter("FromDate", filterParameter.FromDate));
             parameters.Add(new SqlParameter("ToDate", filterParameter.ToDate));
-            parameters.Add(new SqlParameter("OrderStatus", filterParameter.OrderStatus));
+            parameters.Add(new SqlParameter("FirmStatus", filterParameter.OrderStatus));
 
             if (filterParameter.OrderStatus == 0)
                 query = $@"Select F.Id, CompanyName, VOEN, Name + ' ' + Surname Fullname, Phone, Email,
@@ -45,7 +45,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
 	                            else Cast(F.Status as nvarchar(20))
                             END Status,S.ColorCode  from CRD.Firms F
                             Left Join  OBJ.SpeCodes S ON S.RefId = F.Status and S.Type = 'OrderStatus' and S.Status = 1
-                            WHERE F.CreatedDate between @FromDate and @ToDate and F.Status = @OrderStatus {stringFilter}
+                            WHERE F.CreatedDate between @FromDate and @ToDate and F.Status = @FirmStatus {stringFilter}
                             Order by F.Id DESC";
 
             var data = connection.GetData(commandText: query, parameters: parameters);
@@ -124,7 +124,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
         public void ChangeOrderStatus(ChangeStatus model)
         {
             List<SqlParameter> parameters = new List<SqlParameter>();
-            parameters.Add(new SqlParameter("TableName", "CRD.Contract"));
+            parameters.Add(new SqlParameter("TableName", "CRD.Firms"));
             parameters.Add(new SqlParameter("Id", model.Id));
             parameters.Add(new SqlParameter("Status", model.Status));
             connection.RunQuery(commandText: "SP_CHANGESTATUS", parameters: parameters, commandType: CommandType.StoredProcedure);

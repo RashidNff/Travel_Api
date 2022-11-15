@@ -241,7 +241,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                     new SqlParameter("DocType", personDetail.DocType),
                     new SqlParameter("DocNumber", personDetail.DocNumber),
                     new SqlParameter("DocIssueCountry", personDetail.DocIssueCountry),
-                    new SqlParameter("DocExpireDate", personDetail.DocExpireDate),
+                    new SqlParameter("DocExpireDate", personDetail.DocExpireDate)
                 };
 
                 if (!string.IsNullOrEmpty(personDetail.DocName))

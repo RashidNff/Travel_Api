@@ -1,12 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Data.SqlClient;
-using System.Data;
-using TRAVEL_CORE.DAL;
 using TRAVEL_CORE.Entities;
 using TRAVEL_CORE.Entities.Firm;
-using TRAVEL_CORE.Entities.Firm;
+using TRAVEL_CORE.Entities.Person;
 using TRAVEL_CORE.Repositories.Abstract;
 using TRAVEL_CORE.Repositories.Concrete;
 using TRAVEL_CORE.Tools;
@@ -16,31 +13,21 @@ namespace TRAVEL_CORE.Controllers
     [ApiController]
     [Authorize]
     [Route("api/[controller]/[action]")]
-    public class FirmController : ControllerBase
+    public class PersonController : ControllerBase
     {
-        private readonly IFirmRepository _firmRepository;
+        private readonly IPersonRepository _personRepository;
 
-        public FirmController(IFirmRepository firmRepository)
+        public PersonController(IPersonRepository personRepository)
         {
-            _firmRepository = firmRepository;
+            _personRepository = personRepository;
         }
-
-        /// <summary>
-        /// Send Date and Status for get Firm Data;
-        /// 0 - All
-        /// 1 - Active
-        /// 2 - Deactive
-        /// 3 - Deleted
-        /// </summary>
-        /// <param name="filterParameter"></param>
-        /// <returns></returns>
-
+        [AllowAnonymous]
         [HttpPost]
         public IActionResult GetFirmBrowseData(FilterParameter filterParameter)
         {
             try
             {
-                return Ok(JsonConvert.SerializeObject(_firmRepository.GetFirmBrowseData(filterParameter)));
+                return Ok(JsonConvert.SerializeObject(_personRepository.GetPersonBrowseData(filterParameter)));
             }
             catch (Exception)
             {
@@ -48,49 +35,37 @@ namespace TRAVEL_CORE.Controllers
             }
         }
 
-        [HttpGet]
-        public IActionResult GetFirmCode()
-
-        {
-            try
-            {
-                return Ok(JsonConvert.SerializeObject(_firmRepository.GetFirmCode()));
-            }
-            catch (Exception)
-            {
-                return BadRequest(new { message = "Unexpected error occurred!" });
-            }
-        }
-
+        [AllowAnonymous]
         [HttpPost]
-        public IActionResult SaveFirm(FirmData firm)
+        public IActionResult SavePerson(PersonData person)
         {
-            firm.CreatedBy = CommonTools.GetUserId(User.Claims.ToList());
-            int firmId = 0;
+            person.CreatedBy = CommonTools.GetUserId(User.Claims.ToList());
+            int personId = 0;
 
             try
             {
-                firmId = _firmRepository.SaveFirm(firm);
+                personId = _personRepository.SavePerson(person);
             }
             catch (Exception)
             {
                 return BadRequest(new { message = "Unexpected error occurred!" });
             }
 
-            return Ok(new { firmId = firmId });
+            return Ok(new { personId = personId });
         }
 
+        [AllowAnonymous]
         /// <summary>
-        /// Send contract ID to get data
+        /// Send person ID to get data
         /// </summary>
         /// <param name="contractId"></param>
         /// <returns></returns>
         [HttpGet]
-        public IActionResult GetFirmById(int firmId)
+        public IActionResult GetPersonById(int personId)
         {
             try
             {
-                return Ok(_firmRepository.GetFirmById(firmId));
+                return Ok(_personRepository.GetPersonById(personId));
             }
             catch (Exception)
             {
@@ -99,7 +74,7 @@ namespace TRAVEL_CORE.Controllers
         }
 
         /// <summary>
-        /// Change Firm Status by Id
+        /// Change Person Status by Id
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -108,7 +83,7 @@ namespace TRAVEL_CORE.Controllers
         {
             try
             {
-                _firmRepository.ChangeOrderStatus(model);
+                _personRepository.ChangeOrderStatus(model);
             }
             catch (Exception)
             {
@@ -116,5 +91,6 @@ namespace TRAVEL_CORE.Controllers
             }
             return NoContent();
         }
+
     }
 }
