@@ -2,7 +2,7 @@
 
 namespace TRAVEL_CORE.Entities.Contract
 {
-    public class SaveContract
+    public class ContractData
     {
         public int Id { get; set; }
         public int ClientId { get; set; }

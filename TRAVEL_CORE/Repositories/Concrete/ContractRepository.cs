@@ -1,5 +1,7 @@
-﻿using System.Data;
+﻿using Newtonsoft.Json;
+using System.Data;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.Text;
 using TRAVEL_CORE.DAL;
 using TRAVEL_CORE.Entities;
@@ -57,7 +59,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             return data;
         }
 
-        public int SaveContract(SaveContract saveContract)
+        public int SaveContract(ContractData saveContract)
         {
             int generatedId = 0;
             List<SqlParameter> parameters = new List<SqlParameter>
@@ -65,7 +67,8 @@ namespace TRAVEL_CORE.Repositories.Concrete
                     new SqlParameter("ClientId", saveContract.ClientId),
                     new SqlParameter("ContractNo", saveContract.ContractNo),
                     new SqlParameter("BeginDate", saveContract.BeginDate),
-                    new SqlParameter("EndDate", saveContract.EndDate)
+                    new SqlParameter("EndDate", saveContract.EndDate),
+                    new SqlParameter("CreatedBy", saveContract.CreatedBy)
                 };
 
             if (saveContract.Id != 0)
@@ -99,6 +102,26 @@ namespace TRAVEL_CORE.Repositories.Concrete
             string formattedNumber = (number + 1).ToString(formatString.ToString());
 
             return $"{prefix}{formattedNumber}-MLT";
+        }
+
+        public ContractData GetContractById(int contractId)
+        {
+            ContractData contract = new();
+
+            List<SqlParameter> Parameters = new List<SqlParameter>();
+            Parameters.Add(new SqlParameter("Id", contractId));
+            var reader = connection.RunQuery(commandText: "CRD.SP_GetContractById", parameters: Parameters, commandType: CommandType.StoredProcedure);
+            if (reader.Read())
+            {
+                contract.Id = Convert.ToInt32(reader["Id"]);
+                contract.ClientId = Convert.ToInt32(reader["ClientId"]);
+                contract.ContractNo = reader["ContractNo"].ToString();
+                contract.BeginDate = Convert.ToDateTime(reader["BeginDate"].ToString());
+                contract.EndDate = Convert.ToDateTime(reader["EndDate"].ToString());
+            }
+            reader.Close();
+
+            return contract;
         }
 
         public void ChangeOrderStatus(ChangeStatus model)
