@@ -28,6 +28,7 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<ICommonRepository, CommonRepository>();
 builder.Services.AddScoped<ITemplateCostRepository, TemplateCostRepository>();
 builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+builder.Services.AddScoped<IContractRepository, ContractRepository>();
 
 builder.Services.AddSwaggerGen(opt =>
 {
