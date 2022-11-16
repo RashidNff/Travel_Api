@@ -1,6 +1,7 @@
 ﻿using Microsoft.OpenApi.Models;
 using System.Data;
 using System.Data.SqlClient;
+using System.Globalization;
 using TRAVEL_CORE.DAL;
 using TRAVEL_CORE.Entities;
 using TRAVEL_CORE.Entities.Firm;
@@ -75,13 +76,13 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 person.Name = reader["Name"].ToString();
                 person.Surname = reader["Surname"].ToString();
                 person.Gender = Convert.ToInt16(reader["Gender"].ToString());
-                person.BirthDate = Convert.ToDateTime(reader["BirthDate"].ToString());
+                person.BirthDate = Convert.ToDateTime(reader["BirthDate"].ToString(), CultureInfo.CreateSpecificCulture("en-GB"));
                 person.Phone = reader["Phone"].ToString();
                 person.Email = reader["Email"].ToString();
                 person.DocType = Convert.ToInt32(reader["DocType"].ToString());
                 person.DocNumber = reader["DocNumber"].ToString();
                 person.DocIssueCountry = reader["DocIssueCountry"].ToString();
-                person.DocExpireDate = Convert.ToDateTime(reader["DocExpireDate"].ToString());
+                person.DocExpireDate = Convert.ToDateTime(reader["DocExpireDate"].ToString(), CultureInfo.CreateSpecificCulture("en-GB"));
                 person.DocScan = reader["DocScan"].ToString();
             }
             reader.Close();

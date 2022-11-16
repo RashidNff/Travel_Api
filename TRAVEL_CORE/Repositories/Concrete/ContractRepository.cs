@@ -117,8 +117,8 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 contract.ClientId = Convert.ToInt32(reader["ClientId"]);
                 contract.CompanyName = reader["CompanyName"].ToString();
                 contract.ContractNo = reader["ContractNo"].ToString();
-                contract.BeginDate = Convert.ToDateTime(reader["BeginDate"].ToString());
-                contract.EndDate = Convert.ToDateTime(reader["EndDate"].ToString());
+                contract.BeginDate = Convert.ToDateTime(reader["BeginDate"].ToString(), CultureInfo.CreateSpecificCulture("en-GB"));
+                contract.EndDate = Convert.ToDateTime(reader["EndDate"].ToString(), CultureInfo.CreateSpecificCulture("en-GB"));
             }
             reader.Close();
 
