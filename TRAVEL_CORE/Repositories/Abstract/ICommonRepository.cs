@@ -6,5 +6,6 @@ namespace TRAVEL_CORE.Repositories.Abstract
     {
         DataTable GetSpecode(string type);
         DataTable GetTemplateCosts();
+        DataTable GetFirms();
     }
 }
