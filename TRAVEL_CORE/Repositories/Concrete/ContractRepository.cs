@@ -104,9 +104,9 @@ namespace TRAVEL_CORE.Repositories.Concrete
             return $"{prefix}{formattedNumber}-MLT";
         }
 
-        public ContractData GetContractById(int contractId)
+        public ContractById GetContractById(int contractId)
         {
-            ContractData contract = new();
+            ContractById contract = new();
 
             List<SqlParameter> Parameters = new List<SqlParameter>();
             Parameters.Add(new SqlParameter("Id", contractId));
@@ -115,6 +115,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             {
                 contract.Id = Convert.ToInt32(reader["Id"]);
                 contract.ClientId = Convert.ToInt32(reader["ClientId"]);
+                contract.CompanyName = reader["CompanyName"].ToString();
                 contract.ContractNo = reader["ContractNo"].ToString();
                 contract.BeginDate = Convert.ToDateTime(reader["BeginDate"].ToString());
                 contract.EndDate = Convert.ToDateTime(reader["EndDate"].ToString());

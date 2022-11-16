@@ -10,7 +10,7 @@ namespace TRAVEL_CORE.Repositories.Abstract
         DataTable GetContractBrowseData(FilterParameter filterParameter);
         int SaveContract(ContractData saveContract);
         string GetContractNo();
-        ContractData GetContractById(int contractId);
+        ContractById GetContractById(int contractId);
         void ChangeOrderStatus(ChangeStatus model);
     }
 }
