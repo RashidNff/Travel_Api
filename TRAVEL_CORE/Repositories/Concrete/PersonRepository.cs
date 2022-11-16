@@ -34,15 +34,27 @@ namespace TRAVEL_CORE.Repositories.Concrete
             parameters.Add(new SqlParameter("PersonStatus", filterParameter.OrderStatus));
 
             if (filterParameter.OrderStatus == 0)
-                query = $@"Select Name + Surname Fullname, S2.Value1 Gender, DocNumber, DocExpireDate, DocScan   from CRD.PersonDetails P
+                query = $@"Select Name + Surname Fullname, S2.Value1 Gender, S3.Value1 DocType, DocNumber, DocExpireDate, DocScan,
+                            CASE
+	                            when P.Status = 3 then S.Value1
+	                            else Cast(P.Status as nvarchar(20))
+                            END Status,S.ColorCode
+                            from CRD.PersonDetails P
                             Left Join  OBJ.SpeCodes S ON S.RefId = P.Status and S.Type = 'OrderStatus' and S.Status = 1
                             Left Join  OBJ.SpeCodes S2 ON S2.RefId = P.Gender and S2.Type = 'GenderType' and S2.Status = 1
+                            Left Join  OBJ.SpeCodes S3 ON S3.RefId = P.DocType and S3.Type = 'DocType' and S3.Status = 1
                             WHERE P.CreatedDate between @FromDate and @ToDate {stringFilter}
                             Order by P.Id DESC";
             else
-                query = $@"Select Name + Surname Fullname, S2.Value1 Gender, DocNumber, DocExpireDate, DocScan   from CRD.PersonDetails P
+                query = $@"Select Name + Surname Fullname, S2.Value1 Gender, S3.Value1 DocType, DocNumber, DocExpireDate, DocScan,
+                            CASE
+	                            when P.Status = 3 then S.Value1
+	                            else Cast(P.Status as nvarchar(20))
+                            END Status,S.ColorCode
+                            from CRD.PersonDetails P
                             Left Join  OBJ.SpeCodes S ON S.RefId = P.Status and S.Type = 'OrderStatus' and S.Status = 1
                             Left Join  OBJ.SpeCodes S2 ON S2.RefId = P.Gender and S2.Type = 'GenderType' and S2.Status = 1
+                            Left Join  OBJ.SpeCodes S3 ON S3.RefId = P.DocType and S3.Type = 'DocType' and S3.Status = 1
                             WHERE P.CreatedDate between @FromDate and @ToDate and P.Status = @PersonStatus {stringFilter}
                             Order by P.Id DESC";
 
