@@ -113,6 +113,8 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 UploadedFile uploaded = fileOperation.MoveFile(savePerson.DocName, "PersonDetail");
                 parameters.Add(new SqlParameter("DocScan", uploaded.FilePath));
             }
+            else
+                parameters.Add(new SqlParameter("DocScan", savePerson.DocScan));
 
             if (savePerson.Id != 0)
                 generatedId = connection.Execute(tableName: "CRD.PersonDetails", operation: OperationType.Update, fieldName: "Id", ID: savePerson.Id, parameters: parameters);
