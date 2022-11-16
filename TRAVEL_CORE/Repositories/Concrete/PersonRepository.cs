@@ -76,6 +76,8 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 person.Surname = reader["Surname"].ToString();
                 person.Gender = Convert.ToInt16(reader["Gender"].ToString());
                 person.BirthDate = Convert.ToDateTime(reader["BirthDate"].ToString());
+                person.Phone = reader["Phone"].ToString();
+                person.Email = reader["Email"].ToString();
                 person.DocType = Convert.ToInt32(reader["DocType"].ToString());
                 person.DocNumber = reader["DocNumber"].ToString();
                 person.DocIssueCountry = reader["DocIssueCountry"].ToString();
@@ -96,6 +98,8 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 new SqlParameter("Surname", savePerson.Surname),
                 new SqlParameter("Gender", savePerson.Gender),
                 new SqlParameter("BirthDate", savePerson.BirthDate),
+                new SqlParameter("Phone", savePerson.Phone),
+                new SqlParameter("Email", savePerson.Email),
                 new SqlParameter("DocType", savePerson.DocType),
                 new SqlParameter("DocNumber", savePerson.DocNumber),
                 new SqlParameter("DocIssueCountry", savePerson.DocIssueCountry),

@@ -9,6 +9,8 @@ namespace TRAVEL_CORE.Entities.Person
         public string? Surname { get; set; }
         public short Gender { get; set; }
         public DateTime BirthDate { get; set; }
+        public string? Phone { get; set; }
+        public string? Email { get; set; }
         public int DocType { get; set; }
         public string? DocNumber { get; set; }
         public string? DocIssueCountry { get; set; }
