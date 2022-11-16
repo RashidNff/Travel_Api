@@ -34,7 +34,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             parameters.Add(new SqlParameter("PersonStatus", filterParameter.OrderStatus));
 
             if (filterParameter.OrderStatus == 0)
-                query = $@"Select P.Id, Name + Surname Fullname, S2.Value1 Gender, S3.Value1 DocType, DocNumber, DocExpireDate, DocScan,
+                query = $@"Select P.Id, Name +' '+ Surname Fullname, S2.Value1 Gender, S3.Value1 DocType, DocNumber, DocExpireDate, DocScan,
                             CASE
 	                            when P.Status = 3 then S.Value1
 	                            else Cast(P.Status as nvarchar(20))
@@ -46,7 +46,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                             WHERE P.CreatedDate between @FromDate and @ToDate {stringFilter}
                             Order by P.Id DESC";
             else
-                query = $@"Select P.Id, Name + Surname Fullname, S2.Value1 Gender, S3.Value1 DocType, DocNumber, DocExpireDate, DocScan,
+                query = $@"Select P.Id, Name +' '+ Surname Fullname, S2.Value1 Gender, S3.Value1 DocType, DocNumber, DocExpireDate, DocScan,
                             CASE
 	                            when P.Status = 3 then S.Value1
 	                            else Cast(P.Status as nvarchar(20))
