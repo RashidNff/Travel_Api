@@ -76,7 +76,6 @@ namespace TRAVEL_CORE.Controllers
             return Ok(new { contractId = contractId });
         }
 
-        [AllowAnonymous]
         [HttpGet]
         public IActionResult GetContractById(int contractId)
         {

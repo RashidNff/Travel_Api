@@ -95,6 +95,57 @@ namespace TRAVEL_CORE.Controllers
             }
         }
 
+        /// <summary>
+        /// Send Firm Id to get Firm Info
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult GetFirmInfoById(int id)
+        {
+            try
+            {
+                return Ok(JsonConvert.SerializeObject(_commonRepository.GetFirmInfoById(id)));
+            }
+            catch (Exception)
+            {
+                return BadRequest(new { message = "Unexpected error occurred!" });
+            }
+        }
+
+        /// <summary>
+        /// Send Client Document Number to get Client Info
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult GetPersonInfoByDocNumber(string docNumber)
+        {
+            try
+            {
+                return Ok(JsonConvert.SerializeObject(_commonRepository.GetPersonInfoByDocNumber(docNumber)));
+            }
+            catch (Exception)
+            {
+                return BadRequest(new { message = "Unexpected error occurred!" });
+            }
+        }
+
+        /// <summary>
+        /// Get Person Document Numbers Id And Text
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult GetPersonDocNumbers()
+        {
+            try
+            {
+                return Ok(JsonConvert.SerializeObject(_commonRepository.GetPersonDocNumbers()));
+
+            }
+            catch (Exception)
+            {
+                return BadRequest(new { message = "Unexpected error occurred!" });
+            }
+        }
     }
 
 }
