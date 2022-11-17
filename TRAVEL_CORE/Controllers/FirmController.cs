@@ -83,8 +83,10 @@ namespace TRAVEL_CORE.Controllers
         /// <summary>
         /// Send contract ID to get data
         /// </summary>
-        /// <param name="contractId"></param>
+        /// <param name="firmId"></param>
         /// <returns></returns>
+
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult GetFirmById(int firmId)
         {
