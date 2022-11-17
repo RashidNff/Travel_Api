@@ -26,5 +26,29 @@ namespace TRAVEL_CORE.Repositories.Concrete
             var data = connection.GetData(commandText: "CRD.SP_GetFirms", commandType: CommandType.StoredProcedure);
             return data;
         }
+
+        public DataTable GetFirmInfoById(int id)
+        {
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            parameters.Add(new SqlParameter("Id", id));
+            var data = connection.GetData(commandText: "CRD.SP_GetFirmInfoById", parameters: parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+
+        public DataTable GetPersonDocNumbers()
+        {
+            var data = connection.GetData(commandText: "CRD.SP_GetPersonDocNumbers", commandType: CommandType.StoredProcedure);
+            return data;
+        }
+
+        public DataTable GetPersonInfoByDocNumber(string docNumber)
+        {
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            parameters.Add(new SqlParameter("DocNumber", docNumber));
+            var data = connection.GetData(commandText: "CRD.GetPersonInfoById", parameters: parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+
+
     }
 }
