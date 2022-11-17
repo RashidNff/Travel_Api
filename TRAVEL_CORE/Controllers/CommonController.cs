@@ -116,11 +116,11 @@ namespace TRAVEL_CORE.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public IActionResult GetPersonInfoByDocNumber(string docNumber)
+        public IActionResult GetPersonInfoByDocNumber(int docType, string docNumber)
         {
             try
             {
-                return Ok(JsonConvert.SerializeObject(_commonRepository.GetPersonInfoByDocNumber(docNumber)));
+                return Ok(JsonConvert.SerializeObject(_commonRepository.GetPersonInfoByDocNumber(docType, docNumber)));
             }
             catch (Exception)
             {
