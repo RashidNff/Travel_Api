@@ -68,7 +68,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                             Left Join  OPR.Hotels H ON H.OrderId = Ord.Id and H.Status = 1
                             Left Join  OBJ.SpeCodes S ON S.RefId = Ord.Status and S.Type = 'OrderStatus' and S.Status = 1
 							Left Join  CRD.Firms F ON F.Id = Ord.CompanyId
-                            Left Join  (SELECT OperationId,COUNT(*) PCOUNT FROM CRD.PersonDetails WHERE OperationType=2 GROUP BY OperationId) P ON p.OperationId = H.Id 
+                            Left Join  (SELECT OperationId,COUNT(*) PCOUNT FROM CRD.OrderPerson WHERE OperationType=2 GROUP BY OperationId) P ON p.OperationId = H.Id 
                             Left Join  (SELECT OrderId,SUM(SaleAmount) SaleAmount,--CurrencyRate rate,
                             SUM(CurrencyAmount) AznAmount 
                             FROM OPR.ServicesCost  GROUP BY OrderId --,CurrencyRate
@@ -101,7 +101,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                             Left Join  OPR.Hotels H ON H.OrderId = Ord.Id and H.Status = 1
                             Left Join  OBJ.SpeCodes S ON S.RefId = Ord.Status and S.Type = 'OrderStatus' and S.Status = 1
 							Left Join  CRD.Firms F ON F.Id = Ord.CompanyId
-                            Left Join  (SELECT OperationId,COUNT(*) PCOUNT FROM CRD.PersonDetails WHERE OperationType=2 GROUP BY OperationId) P ON p.OperationId = H.Id 
+                            Left Join  (SELECT OperationId,COUNT(*) PCOUNT FROM CRD.OrderPerson WHERE OperationType=2 GROUP BY OperationId) P ON p.OperationId = H.Id 
                             Left Join  (SELECT OrderId,SUM(SaleAmount) SaleAmount,--CurrencyRate rate,
                             SUM(CurrencyAmount) AznAmount 
                             FROM OPR.ServicesCost  GROUP BY OrderId --,CurrencyRate
