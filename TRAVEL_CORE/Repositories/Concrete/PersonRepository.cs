@@ -76,13 +76,13 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 person.Name = reader["Name"].ToString();
                 person.Surname = reader["Surname"].ToString();
                 person.Gender = Convert.ToInt16(reader["Gender"].ToString());
-                person.BirthDate = Convert.ToDateTime(reader["BirthDate"].ToString(), CultureInfo.CreateSpecificCulture("en-GB"));
+                person.BirthDate = Convert.ToDateTime(reader["BirthDate"].ToString());
                 person.Phone = reader["Phone"].ToString();
                 person.Email = reader["Email"].ToString();
                 person.DocType = Convert.ToInt32(reader["DocType"].ToString());
                 person.DocNumber = reader["DocNumber"].ToString();
                 person.DocIssueCountry = reader["DocIssueCountry"].ToString();
-                person.DocExpireDate = Convert.ToDateTime(reader["DocExpireDate"].ToString(), CultureInfo.CreateSpecificCulture("en-GB"));
+                person.DocExpireDate = Convert.ToDateTime(reader["DocExpireDate"].ToString());
                 person.DocScan = reader["DocScan"].ToString();
             }
             reader.Close();
@@ -118,18 +118,19 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 parameters.Add(new SqlParameter("DocScan", savePerson.DocScan));
 
 
-            List<SqlParameter> checkParameters = new List<SqlParameter>();
-            checkParameters.Add(new SqlParameter("DocNumber", savePerson.DocNumber));
-
-            var reader = connection.RunQuery(commandText: "CRD.SP_CheckPerson", parameters: checkParameters, commandType: CommandType.StoredProcedure);
-            if (reader.Read())
-                return 0;
-
-
             if (savePerson.Id != 0)
-                generatedId = connection.Execute(tableName: "CRD.PersonDetails", operation: OperationType.Update, fieldName: "Id", ID: savePerson.Id, parameters: parameters);
+                    generatedId = connection.Execute(tableName: "CRD.PersonDetails", operation: OperationType.Update, fieldName: "Id", ID: savePerson.Id, parameters: parameters);
             else
-                generatedId = connection.Execute(tableName: "CRD.PersonDetails", operation: OperationType.Insert, parameters: parameters);
+            {
+                List<SqlParameter> checkParameters = new List<SqlParameter>();
+                checkParameters.Add(new SqlParameter("DocNumber", savePerson.DocNumber));
+
+                var reader = connection.RunQuery(commandText: "CRD.SP_CheckPerson", parameters: checkParameters, commandType: CommandType.StoredProcedure);
+                if (reader.Read())
+                    return 0;
+                else
+                    generatedId = connection.Execute(tableName: "CRD.PersonDetails", operation: OperationType.Insert, parameters: parameters);
+            }
 
             return generatedId;
         }
