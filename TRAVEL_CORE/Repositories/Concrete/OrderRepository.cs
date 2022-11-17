@@ -494,7 +494,8 @@ namespace TRAVEL_CORE.Repositories.Concrete
             while (readerPerson.Read())
             {
                 PersonDetailsById personDetailsById = new();
-                personDetailsById.Id = Convert.ToInt32(readerPerson["Id"]);
+                personDetailsById.OrderPersonId = Convert.ToInt32(readerPerson["OrderPersonId"]);
+                personDetailsById.PersonId = Convert.ToInt32(readerPerson["PersonId"]);
                 personDetailsById.Category = Convert.ToInt32(readerPerson["Category"].ToString());
                 personDetailsById.PersonAgeName = readerPerson["PersonAgeName"].ToString();
                 personDetailsById.Name = readerPerson["Name"].ToString();
@@ -510,7 +511,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
 
 
                 List<SqlParameter> additionalAndSpecial = new List<SqlParameter>();
-                additionalAndSpecial.Add(new SqlParameter("PersonId", personDetailsById.Id));
+                additionalAndSpecial.Add(new SqlParameter("PersonId", personDetailsById.OrderPersonId));
 
                 var additionallines = connection.GetData(commandText: "CRD.SP_GetAdditionalServicesByPersonId", parameters: additionalAndSpecial, commandType: CommandType.StoredProcedure);
                 personDetailsById.AdditionalServices = JsonConvert.DeserializeObject<List<AdditionalServices>>(JsonConvert.SerializeObject(additionallines));
