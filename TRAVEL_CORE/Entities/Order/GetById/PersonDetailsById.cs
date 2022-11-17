@@ -2,7 +2,8 @@
 {
     public class PersonDetailsById
     {
-        public int Id { get; set; }
+        public int OrderPersonId { get; set; }
+        public int PersonId { get; set; }
         public int Category { get; set; }
         public string? PersonAgeName { get; set; }
         public string? Name { get; set; }

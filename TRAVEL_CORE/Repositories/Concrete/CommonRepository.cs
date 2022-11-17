@@ -41,11 +41,12 @@ namespace TRAVEL_CORE.Repositories.Concrete
             return data;
         }
 
-        public DataTable GetPersonInfoByDocNumber(string docNumber)
+        public DataTable GetPersonInfoByDocNumber(int docType,string docNumber)
         {
             List<SqlParameter> parameters = new List<SqlParameter>();
+            parameters.Add(new SqlParameter("DocType", docType));
             parameters.Add(new SqlParameter("DocNumber", docNumber));
-            var data = connection.GetData(commandText: "CRD.GetPersonInfoById", parameters: parameters, commandType: CommandType.StoredProcedure);
+            var data = connection.GetData(commandText: "CRD.SP_GetPersonInfoById", parameters: parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
 

@@ -42,7 +42,7 @@ namespace TRAVEL_CORE.Controllers
             }
         }
 
-
+        [AllowAnonymous]
         [HttpPost]
         public IActionResult SaveOrder(SaveOrder order)
         {
@@ -61,7 +61,7 @@ namespace TRAVEL_CORE.Controllers
 
             return Ok(new { orderId = orderId });
         }
-
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult GetOrderById(int orderId)
         {

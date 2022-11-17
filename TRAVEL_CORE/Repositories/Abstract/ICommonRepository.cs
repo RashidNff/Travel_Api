@@ -8,7 +8,7 @@ namespace TRAVEL_CORE.Repositories.Abstract
         DataTable GetTemplateCosts();
         DataTable GetFirms();
         DataTable GetFirmInfoById(int id);
-        DataTable GetPersonInfoByDocNumber(string docNumber);
+        DataTable GetPersonInfoByDocNumber(int docType, string docNumber);
         DataTable GetPersonDocNumbers();
     }
 }

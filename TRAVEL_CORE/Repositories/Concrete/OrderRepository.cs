@@ -43,9 +43,9 @@ namespace TRAVEL_CORE.Repositories.Concrete
             parameters.Add(new SqlParameter("OrderStatus", filterParameter.OrderStatus));
 
             if (filterParameter.OrderStatus == 0)
-                query = $@"Select OrderNo,Ord.ID,
+                query = $@"Select OrderNo,Ord.ID, F.CompanyName, FullName, Ord.Phone,
                             --AirWay
-                            CompanyName, FullName, Phone, FromPoint, ToPoint, Convert(varchar, DepartureDate, 105) DepartureDate, Convert(varchar, ReturnDate, 105) ReturnDate, PassengersCount,
+                             FromPoint, ToPoint, Convert(varchar, DepartureDate, 105) DepartureDate, Convert(varchar, ReturnDate, 105) ReturnDate, PassengersCount,
                             Case 
 	                            when Air.Bron = 0  then null
 	                            else Convert(varchar, Air.BronExpiryDate, 105)
@@ -67,7 +67,8 @@ namespace TRAVEL_CORE.Repositories.Concrete
                             Left Join  OPR.Airways Air ON Air.OrderId = Ord.Id and Air.Status = 1
                             Left Join  OPR.Hotels H ON H.OrderId = Ord.Id and H.Status = 1
                             Left Join  OBJ.SpeCodes S ON S.RefId = Ord.Status and S.Type = 'OrderStatus' and S.Status = 1
-                            Left Join  (SELECT OperationId,COUNT(*) PCOUNT FROM CRD.PersonDetails WHERE OperationType=2 GROUP BY OperationId) P ON p.OperationId = H.Id 
+							Left Join  CRD.Firms F ON F.Id = Ord.CompanyId
+                            Left Join  (SELECT OperationId,COUNT(*) PCOUNT FROM CRD.OrderPerson WHERE OperationType=2 GROUP BY OperationId) P ON p.OperationId = H.Id 
                             Left Join  (SELECT OrderId,SUM(SaleAmount) SaleAmount,--CurrencyRate rate,
                             SUM(CurrencyAmount) AznAmount 
                             FROM OPR.ServicesCost  GROUP BY OrderId --,CurrencyRate
@@ -75,9 +76,9 @@ namespace TRAVEL_CORE.Repositories.Concrete
                             WHERE Orderdate between @FromDate and @ToDate {stringFilter}
                             Order by Ord.ID desc";
             else
-                query = $@"Select OrderNo,Ord.ID,
+                query = $@"Select OrderNo,Ord.ID, F.CompanyName, FullName, Ord.Phone,
                             --AirWay
-                            CompanyName, FullName, Phone, FromPoint, ToPoint, Convert(varchar, DepartureDate, 105) DepartureDate, Convert(varchar, ReturnDate, 105) ReturnDate, PassengersCount,
+                             FromPoint, ToPoint, Convert(varchar, DepartureDate, 105) DepartureDate, Convert(varchar, ReturnDate, 105) ReturnDate, PassengersCount,
                             Case 
 	                            when Air.Bron = 0  then null
 	                            else Convert(varchar, Air.BronExpiryDate, 105)
@@ -99,7 +100,8 @@ namespace TRAVEL_CORE.Repositories.Concrete
                             Left Join  OPR.Airways Air ON Air.OrderId = Ord.Id and Air.Status = 1
                             Left Join  OPR.Hotels H ON H.OrderId = Ord.Id and H.Status = 1
                             Left Join  OBJ.SpeCodes S ON S.RefId = Ord.Status and S.Type = 'OrderStatus' and S.Status = 1
-                            Left Join  (SELECT OperationId,COUNT(*) PCOUNT FROM CRD.PersonDetails WHERE OperationType=2 GROUP BY OperationId) P ON p.OperationId = H.Id 
+							Left Join  CRD.Firms F ON F.Id = Ord.CompanyId
+                            Left Join  (SELECT OperationId,COUNT(*) PCOUNT FROM CRD.OrderPerson WHERE OperationType=2 GROUP BY OperationId) P ON p.OperationId = H.Id 
                             Left Join  (SELECT OrderId,SUM(SaleAmount) SaleAmount,--CurrencyRate rate,
                             SUM(CurrencyAmount) AznAmount 
                             FROM OPR.ServicesCost  GROUP BY OrderId --,CurrencyRate
@@ -128,7 +130,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                     new SqlParameter("OrderNo", order.OrderNo),
                     new SqlParameter("OrderType", order.OrderType),
                     new SqlParameter("OrderDate", order.OrderDate),
-                    new SqlParameter("CompanyName", order.CompanyName),
+                    new SqlParameter("CompanyId", order.CompanyId),
                     new SqlParameter("VOEN", order.VOEN),
                     new SqlParameter("FullName", order.FullName),
                     new SqlParameter("Phone", order.Phone),
@@ -229,34 +231,42 @@ namespace TRAVEL_CORE.Repositories.Concrete
             int id = 0;
             foreach (var personDetail in personDetails)
             {
+                //List<SqlParameter> personParameters = new List<SqlParameter>
+                //{
+                //    new SqlParameter("OperationId", operationId),
+                //    new SqlParameter("OperationType", operationType),
+                //    new SqlParameter("Category", personDetail.Category),
+                //    new SqlParameter("Name", personDetail.Name),
+                //    new SqlParameter("Surname", personDetail.Surname),
+                //    new SqlParameter("Gender", personDetail.Gender),
+                //    new SqlParameter("BirthDate", personDetail.BirthDate),
+                //    new SqlParameter("DocType", personDetail.DocType),
+                //    new SqlParameter("DocNumber", personDetail.DocNumber),
+                //    new SqlParameter("DocIssueCountry", personDetail.DocIssueCountry),
+                //    new SqlParameter("DocExpireDate", personDetail.DocExpireDate)
+                //};
+
+                //if (!string.IsNullOrEmpty(personDetail.DocName))
+                //{
+                //    FileOperation fileOperation = new FileOperation();
+                //    UploadedFile uploaded = fileOperation.MoveFile(personDetail.DocName, "PersonDetail");
+                //    personParameters.Add(new SqlParameter("DocScan", uploaded.FilePath));
+                //}
+                //else
+                //    personParameters.Add(new SqlParameter("DocScan", ""));
+
                 List<SqlParameter> personParameters = new List<SqlParameter>
                 {
+                    new SqlParameter("PersonId", personDetail.PersonId),
                     new SqlParameter("OperationId", operationId),
                     new SqlParameter("OperationType", operationType),
-                    new SqlParameter("Category", personDetail.Category),
-                    new SqlParameter("Name", personDetail.Name),
-                    new SqlParameter("Surname", personDetail.Surname),
-                    new SqlParameter("Gender", personDetail.Gender),
-                    new SqlParameter("BirthDate", personDetail.BirthDate),
-                    new SqlParameter("DocType", personDetail.DocType),
-                    new SqlParameter("DocNumber", personDetail.DocNumber),
-                    new SqlParameter("DocIssueCountry", personDetail.DocIssueCountry),
-                    new SqlParameter("DocExpireDate", personDetail.DocExpireDate)
+                    new SqlParameter("Category", personDetail.Category)
                 };
 
-                if (!string.IsNullOrEmpty(personDetail.DocName))
-                {
-                    FileOperation fileOperation = new FileOperation();
-                    UploadedFile uploaded = fileOperation.MoveFile(personDetail.DocName, "PersonDetail");
-                    personParameters.Add(new SqlParameter("DocScan", uploaded.FilePath));
-                }
+                if (personDetail.OrderPersonId != 0)
+                    id = connection.Execute(tableName: "CRD.OrderPerson", operation: OperationType.Update, fieldName: "Id", ID: personDetail.OrderPersonId, parameters: personParameters);
                 else
-                    personParameters.Add(new SqlParameter("DocScan", ""));
-
-                if (personDetail.Id != 0)
-                    id = connection.Execute(tableName: "CRD.PersonDetails", operation: OperationType.Update, fieldName: "Id", ID: personDetail.Id, parameters: personParameters);
-                else
-                    id = connection.Execute(tableName: "CRD.PersonDetails", operation: OperationType.Insert, parameters: personParameters);
+                    id = connection.Execute(tableName: "CRD.OrderPerson", operation: OperationType.Insert, parameters: personParameters);
                 
 
                 DeleteServices(id);                
@@ -384,8 +394,8 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 orderInfo.FullName = reader["Fullname"].ToString();
                 orderInfo.Phone = reader["Phone"].ToString();
                 orderInfo.Email = reader["Email"].ToString();
-                var fdfdf = reader["CompanyName"].ToString();
                 orderInfo.CompanyName = reader["CompanyName"].ToString();
+                orderInfo.CompanyId = Convert.ToInt32(reader["CompanyId"].ToString());
                 orderInfo.VOEN = reader["VOEN"].ToString();
             }
             reader.Close();
@@ -484,7 +494,8 @@ namespace TRAVEL_CORE.Repositories.Concrete
             while (readerPerson.Read())
             {
                 PersonDetailsById personDetailsById = new();
-                personDetailsById.Id = Convert.ToInt32(readerPerson["Id"]);
+                personDetailsById.OrderPersonId = Convert.ToInt32(readerPerson["OrderPersonId"]);
+                personDetailsById.PersonId = Convert.ToInt32(readerPerson["PersonId"]);
                 personDetailsById.Category = Convert.ToInt32(readerPerson["Category"].ToString());
                 personDetailsById.PersonAgeName = readerPerson["PersonAgeName"].ToString();
                 personDetailsById.Name = readerPerson["Name"].ToString();
@@ -500,7 +511,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
 
 
                 List<SqlParameter> additionalAndSpecial = new List<SqlParameter>();
-                additionalAndSpecial.Add(new SqlParameter("PersonId", personDetailsById.Id));
+                additionalAndSpecial.Add(new SqlParameter("PersonId", personDetailsById.OrderPersonId));
 
                 var additionallines = connection.GetData(commandText: "CRD.SP_GetAdditionalServicesByPersonId", parameters: additionalAndSpecial, commandType: CommandType.StoredProcedure);
                 personDetailsById.AdditionalServices = JsonConvert.DeserializeObject<List<AdditionalServices>>(JsonConvert.SerializeObject(additionallines));
