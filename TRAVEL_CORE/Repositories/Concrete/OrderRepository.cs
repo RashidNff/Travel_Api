@@ -231,34 +231,42 @@ namespace TRAVEL_CORE.Repositories.Concrete
             int id = 0;
             foreach (var personDetail in personDetails)
             {
+                //List<SqlParameter> personParameters = new List<SqlParameter>
+                //{
+                //    new SqlParameter("OperationId", operationId),
+                //    new SqlParameter("OperationType", operationType),
+                //    new SqlParameter("Category", personDetail.Category),
+                //    new SqlParameter("Name", personDetail.Name),
+                //    new SqlParameter("Surname", personDetail.Surname),
+                //    new SqlParameter("Gender", personDetail.Gender),
+                //    new SqlParameter("BirthDate", personDetail.BirthDate),
+                //    new SqlParameter("DocType", personDetail.DocType),
+                //    new SqlParameter("DocNumber", personDetail.DocNumber),
+                //    new SqlParameter("DocIssueCountry", personDetail.DocIssueCountry),
+                //    new SqlParameter("DocExpireDate", personDetail.DocExpireDate)
+                //};
+
+                //if (!string.IsNullOrEmpty(personDetail.DocName))
+                //{
+                //    FileOperation fileOperation = new FileOperation();
+                //    UploadedFile uploaded = fileOperation.MoveFile(personDetail.DocName, "PersonDetail");
+                //    personParameters.Add(new SqlParameter("DocScan", uploaded.FilePath));
+                //}
+                //else
+                //    personParameters.Add(new SqlParameter("DocScan", ""));
+
                 List<SqlParameter> personParameters = new List<SqlParameter>
                 {
+                    new SqlParameter("PersonId", personDetail.PersonId),
                     new SqlParameter("OperationId", operationId),
                     new SqlParameter("OperationType", operationType),
-                    new SqlParameter("Category", personDetail.Category),
-                    new SqlParameter("Name", personDetail.Name),
-                    new SqlParameter("Surname", personDetail.Surname),
-                    new SqlParameter("Gender", personDetail.Gender),
-                    new SqlParameter("BirthDate", personDetail.BirthDate),
-                    new SqlParameter("DocType", personDetail.DocType),
-                    new SqlParameter("DocNumber", personDetail.DocNumber),
-                    new SqlParameter("DocIssueCountry", personDetail.DocIssueCountry),
-                    new SqlParameter("DocExpireDate", personDetail.DocExpireDate)
+                    new SqlParameter("Category", personDetail.Category)
                 };
 
-                if (!string.IsNullOrEmpty(personDetail.DocName))
-                {
-                    FileOperation fileOperation = new FileOperation();
-                    UploadedFile uploaded = fileOperation.MoveFile(personDetail.DocName, "PersonDetail");
-                    personParameters.Add(new SqlParameter("DocScan", uploaded.FilePath));
-                }
+                if (personDetail.OrderPersonId != 0)
+                    id = connection.Execute(tableName: "CRD.OrderPerson", operation: OperationType.Update, fieldName: "Id", ID: personDetail.OrderPersonId, parameters: personParameters);
                 else
-                    personParameters.Add(new SqlParameter("DocScan", ""));
-
-                if (personDetail.Id != 0)
-                    id = connection.Execute(tableName: "CRD.PersonDetails", operation: OperationType.Update, fieldName: "Id", ID: personDetail.Id, parameters: personParameters);
-                else
-                    id = connection.Execute(tableName: "CRD.PersonDetails", operation: OperationType.Insert, parameters: personParameters);
+                    id = connection.Execute(tableName: "CRD.OrderPerson", operation: OperationType.Insert, parameters: personParameters);
                 
 
                 DeleteServices(id);                

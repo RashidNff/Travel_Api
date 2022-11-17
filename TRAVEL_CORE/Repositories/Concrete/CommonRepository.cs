@@ -45,7 +45,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
         {
             List<SqlParameter> parameters = new List<SqlParameter>();
             parameters.Add(new SqlParameter("DocNumber", docNumber));
-            var data = connection.GetData(commandText: "CRD.GetPersonInfoById", parameters: parameters, commandType: CommandType.StoredProcedure);
+            var data = connection.GetData(commandText: "CRD.SP_GetPersonInfoById", parameters: parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
 
