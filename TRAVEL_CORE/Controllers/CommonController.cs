@@ -87,7 +87,6 @@ namespace TRAVEL_CORE.Controllers
             try
             {
                 return Ok(JsonConvert.SerializeObject(_commonRepository.GetFirms()));
-
             }
             catch (Exception)
             {

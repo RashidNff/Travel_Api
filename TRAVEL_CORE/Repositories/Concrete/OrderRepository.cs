@@ -43,9 +43,9 @@ namespace TRAVEL_CORE.Repositories.Concrete
             parameters.Add(new SqlParameter("OrderStatus", filterParameter.OrderStatus));
 
             if (filterParameter.OrderStatus == 0)
-                query = $@"Select OrderNo,Ord.ID,
+                query = $@"Select OrderNo,Ord.ID, F.CompanyName, FullName, Ord.Phone,
                             --AirWay
-                            CompanyName, FullName, Phone, FromPoint, ToPoint, Convert(varchar, DepartureDate, 105) DepartureDate, Convert(varchar, ReturnDate, 105) ReturnDate, PassengersCount,
+                             FromPoint, ToPoint, Convert(varchar, DepartureDate, 105) DepartureDate, Convert(varchar, ReturnDate, 105) ReturnDate, PassengersCount,
                             Case 
 	                            when Air.Bron = 0  then null
 	                            else Convert(varchar, Air.BronExpiryDate, 105)
@@ -67,6 +67,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                             Left Join  OPR.Airways Air ON Air.OrderId = Ord.Id and Air.Status = 1
                             Left Join  OPR.Hotels H ON H.OrderId = Ord.Id and H.Status = 1
                             Left Join  OBJ.SpeCodes S ON S.RefId = Ord.Status and S.Type = 'OrderStatus' and S.Status = 1
+							Left Join  CRD.Firms F ON F.Id = Ord.CompanyId
                             Left Join  (SELECT OperationId,COUNT(*) PCOUNT FROM CRD.PersonDetails WHERE OperationType=2 GROUP BY OperationId) P ON p.OperationId = H.Id 
                             Left Join  (SELECT OrderId,SUM(SaleAmount) SaleAmount,--CurrencyRate rate,
                             SUM(CurrencyAmount) AznAmount 
@@ -75,9 +76,9 @@ namespace TRAVEL_CORE.Repositories.Concrete
                             WHERE Orderdate between @FromDate and @ToDate {stringFilter}
                             Order by Ord.ID desc";
             else
-                query = $@"Select OrderNo,Ord.ID,
+                query = $@"Select OrderNo,Ord.ID, F.CompanyName, FullName, Ord.Phone,
                             --AirWay
-                            CompanyName, FullName, Phone, FromPoint, ToPoint, Convert(varchar, DepartureDate, 105) DepartureDate, Convert(varchar, ReturnDate, 105) ReturnDate, PassengersCount,
+                             FromPoint, ToPoint, Convert(varchar, DepartureDate, 105) DepartureDate, Convert(varchar, ReturnDate, 105) ReturnDate, PassengersCount,
                             Case 
 	                            when Air.Bron = 0  then null
 	                            else Convert(varchar, Air.BronExpiryDate, 105)
@@ -99,6 +100,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                             Left Join  OPR.Airways Air ON Air.OrderId = Ord.Id and Air.Status = 1
                             Left Join  OPR.Hotels H ON H.OrderId = Ord.Id and H.Status = 1
                             Left Join  OBJ.SpeCodes S ON S.RefId = Ord.Status and S.Type = 'OrderStatus' and S.Status = 1
+							Left Join  CRD.Firms F ON F.Id = Ord.CompanyId
                             Left Join  (SELECT OperationId,COUNT(*) PCOUNT FROM CRD.PersonDetails WHERE OperationType=2 GROUP BY OperationId) P ON p.OperationId = H.Id 
                             Left Join  (SELECT OrderId,SUM(SaleAmount) SaleAmount,--CurrencyRate rate,
                             SUM(CurrencyAmount) AznAmount 
@@ -128,7 +130,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                     new SqlParameter("OrderNo", order.OrderNo),
                     new SqlParameter("OrderType", order.OrderType),
                     new SqlParameter("OrderDate", order.OrderDate),
-                    new SqlParameter("CompanyName", order.CompanyName),
+                    new SqlParameter("CompanyId", order.CompanyId),
                     new SqlParameter("VOEN", order.VOEN),
                     new SqlParameter("FullName", order.FullName),
                     new SqlParameter("Phone", order.Phone),
@@ -384,8 +386,8 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 orderInfo.FullName = reader["Fullname"].ToString();
                 orderInfo.Phone = reader["Phone"].ToString();
                 orderInfo.Email = reader["Email"].ToString();
-                var fdfdf = reader["CompanyName"].ToString();
                 orderInfo.CompanyName = reader["CompanyName"].ToString();
+                orderInfo.CompanyId = Convert.ToInt32(reader["CompanyId"].ToString());
                 orderInfo.VOEN = reader["VOEN"].ToString();
             }
             reader.Close();
