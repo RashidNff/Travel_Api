@@ -517,8 +517,15 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 var additionallines = connection.GetData(commandText: "CRD.SP_GetAdditionalServicesByPersonId", parameters: additionalAndSpecial, commandType: CommandType.StoredProcedure);
                 personDetailsById.AdditionalServices = JsonConvert.DeserializeObject<List<AdditionalServices>>(JsonConvert.SerializeObject(additionallines));
 
-                var speciallines = connection.GetData(commandText: "CRD.SP_GetSpecialServicesByPersonId", parameters: additionalAndSpecial, commandType: CommandType.StoredProcedure);
-                personDetailsById.SpecialServices = JsonConvert.DeserializeObject<List<SpecialServices>>(JsonConvert.SerializeObject(speciallines));
+                var speciallinesReader = connection.RunQuery(commandText: "CRD.SP_GetSpecialServicesByPersonId", parameters: additionalAndSpecial, commandType: CommandType.StoredProcedure);
+                List<int> specialList = new();
+                while(speciallinesReader.Read())
+                {
+                    var djdjd = Convert.ToInt32(speciallinesReader["ServicesId"]);
+                    specialList.Add(Convert.ToInt32(speciallinesReader["ServicesId"]));
+                }
+                personDetailsById.SpecialServices = specialList;
+                //personDetailsById.SpecialServices = JsonConvert.DeserializeObject<List<int>>(speciallines);
 
                 personList.Add(personDetailsById);
             }

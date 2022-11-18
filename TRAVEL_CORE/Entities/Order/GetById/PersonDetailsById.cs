@@ -16,6 +16,6 @@
         public DateTime DocExpireDate { get; set; }
         public string? DocScan { get; set; }
         public List<AdditionalServices>? AdditionalServices { get; set; }
-        public List<SpecialServices>? SpecialServices  { get; set; }
+        public List<int>? SpecialServices  { get; set; }
     }
 }
