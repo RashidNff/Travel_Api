@@ -124,7 +124,6 @@ namespace TRAVEL_CORE.Repositories.Concrete
                     new SqlParameter("FullName", order.FullName),
                     new SqlParameter("Phone", order.Phone),
                     new SqlParameter("Email", order.Email),
-                    new SqlParameter("NoticePeriod", order.NoticePeriod),
                     new SqlParameter("CreatedBy", order.CreatedBy)
                 };
 
@@ -173,7 +172,8 @@ namespace TRAVEL_CORE.Repositories.Concrete
                     new SqlParameter("FlightClassId", airwayModel.FlightClassId),
                     new SqlParameter("PassengersCount", airwayModel.PassengersCount),
                     new SqlParameter("Bron", airwayModel.Bron),
-                    new SqlParameter("BronExpiryDate", airwayModel.BronExpiryDate?.ToString("yyyy-MM-dd") ?? String.Empty)
+                    new SqlParameter("BronExpiryDate", airwayModel.BronExpiryDate?.ToString("yyyy-MM-dd") ?? String.Empty),
+                    new SqlParameter("NoticePeriod", airwayModel.NoticePeriod)
                 };
 
             if (airwayModel.Id != 0)
@@ -201,7 +201,8 @@ namespace TRAVEL_CORE.Repositories.Concrete
                     new SqlParameter("GuestCount", hotelModel.GuestCount),
                     new SqlParameter("RoomClassId", hotelModel.RoomClassId),
                     new SqlParameter("Bron", hotelModel.Bron),
-                    new SqlParameter("BronExpiryDate", hotelModel.BronExpiryDate?.ToString("yyyy-MM-dd") ?? String.Empty)
+                    new SqlParameter("BronExpiryDate", hotelModel.BronExpiryDate?.ToString("yyyy-MM-dd") ?? String.Empty),
+                    new SqlParameter("NoticePeriod", hotelModel.NoticePeriod)
             };
 
             if (hotelModel.Id != 0)
@@ -390,7 +391,6 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 orderInfo.CompanyName = reader["CompanyName"].ToString();
                 orderInfo.CompanyId = Convert.ToInt32(reader["CompanyId"].ToString());
                 orderInfo.VOEN = reader["VOEN"].ToString();
-                orderInfo.NoticePeriod = Convert.ToInt32(reader["NoticePeriod"]);
             }
             reader.Close();
 
@@ -408,8 +408,12 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 airwayInfo.PassengersCount = Convert.ToInt32(readerAir["PassengersCount"].ToString());
                 airwayInfo.Bron = Convert.ToBoolean(readerAir["Bron"].ToString());
 
+
                 if (readerAir["BronExpiryDate"].ToString() != "")
+                {
                     airwayInfo.BronExpiryDate = Convert.ToDateTime(readerAir["BronExpiryDate"], CultureInfo.CreateSpecificCulture("en-GB"));
+                    airwayInfo.NoticePeriod = Convert.ToInt32(readerAir["NoticePeriod"]);
+                }
                 
                 List<PersonCategoryCount> personAgeCountsList = new();
                 personAgeCountsList = GetPersonAgeCount(personAgeCountsList, airwayInfo.Id, OrderOperationType.Airway);
@@ -440,7 +444,10 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 hotelInfo.Bron = Convert.ToBoolean(readerHotel["Bron"].ToString());
 
                 if (readerHotel["BronExpiryDate"].ToString() != "")
+                {
                     hotelInfo.BronExpiryDate = Convert.ToDateTime(readerHotel["BronExpiryDate"], CultureInfo.CreateSpecificCulture("en-GB"));
+                    hotelInfo.NoticePeriod = Convert.ToInt32(readerHotel["NoticePeriod"]);
+                }
 
                 List<PersonCategoryCount> roomCountsList = new();
                 roomCountsList = GetPersonAgeCount(roomCountsList, hotelInfo.Id, OrderOperationType.Hotel);
@@ -569,7 +576,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             else
                 type = (int)MessageCodes.Deactive;
 
-            return new ResponseModel { Message = CommonTools.GetMessage(type), Status = true };
+            return new ResponseModel { Message = CommonTools.GetMessage(type), Status = true, Data = null };
         }
 
         public void SendMail()

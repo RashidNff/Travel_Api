@@ -14,7 +14,6 @@ namespace TRAVEL_CORE.Entities.Order
         public string? FullName { get; set; }
         public string? Phone { get; set; }
         public string? Email { get; set; }
-        public int? NoticePeriod { get; set; } = 0;
         [JsonIgnore]
         public int CreatedBy { get; set; }
         public Airway? AirwayData { get; set; }

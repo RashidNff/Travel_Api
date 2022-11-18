@@ -11,6 +11,7 @@
         public int PassengersCount { get; set; }
         public Boolean Bron { get; set; }
         public DateTime? BronExpiryDate { get; set; }
+        public int? NoticePeriod { get; set; }
         public List<PersonDetails>? PersonDetails { get; set; }
         public List<int>? DeletedPersonDetailIds { get; set; }
     }

@@ -117,9 +117,9 @@ namespace TRAVEL_CORE.Controllers
             }
             catch (Exception)
             {
-                return BadRequest(new ResponseModel { Message = "Unexpected error occurred!", Status = false });
+                return BadRequest(new ResponseModel { Message = "Unexpected error occurred!", Status = false, Data = null });
             }
-            return Ok(model);
+            return Ok(responseModel);
         }
     }
 }

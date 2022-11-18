@@ -136,7 +136,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             else
                 type = (int)MessageCodes.Deactive;
 
-            return new ResponseModel { Message = CommonTools.GetMessage(type), Status = true };
+            return new ResponseModel { Message = CommonTools.GetMessage(type), Status = true, Data = null };
         }
     }
 }
