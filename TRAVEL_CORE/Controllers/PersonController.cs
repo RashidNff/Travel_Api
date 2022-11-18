@@ -41,17 +41,18 @@ namespace TRAVEL_CORE.Controllers
         {
             person.CreatedBy = CommonTools.GetUserId(User.Claims.ToList());
             int personId = 0;
+            ResponseModel model = new();
 
             try
             {
-                personId = _personRepository.SavePerson(person);
+                model = _personRepository.SavePerson(person);
             }
             catch (Exception)
             {
-                return BadRequest(new { message = "Unexpected error occurred!" });
+                return BadRequest(new ResponseModel { Message = "Unexpected error occurred!", Status = false });
             }
 
-            return Ok(new { personId = personId });
+            return Ok(model);
         }
 
         [AllowAnonymous]
@@ -81,15 +82,16 @@ namespace TRAVEL_CORE.Controllers
         [HttpPut]
         public IActionResult ChangeStatus(ChangeStatus model)
         {
+            ResponseModel responseModel = new();
             try
             {
-                _personRepository.ChangeStatus(model);
+                responseModel = _personRepository.ChangeStatus(model);
             }
             catch (Exception)
             {
-                return BadRequest(new { message = "Unexpected error occurred!" });
+                return BadRequest(new ResponseModel { Message = "Unexpected error occurred!", Status = false });
             }
-            return NoContent();
+            return Ok(model);
         }
 
     }

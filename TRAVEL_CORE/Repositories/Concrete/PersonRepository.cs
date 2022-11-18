@@ -8,6 +8,7 @@ using TRAVEL_CORE.Entities.Firm;
 using TRAVEL_CORE.Entities.Order;
 using TRAVEL_CORE.Entities.Order.GetById;
 using TRAVEL_CORE.Entities.Person;
+using TRAVEL_CORE.Enums;
 using TRAVEL_CORE.Repositories.Abstract;
 using TRAVEL_CORE.Tools;
 
@@ -82,7 +83,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             return person;
         }
 
-        public int SavePerson(PersonData savePerson)
+        public ResponseModel SavePerson(PersonData savePerson)
         {
             int generatedId = 0;
             List<SqlParameter> parameters = new List<SqlParameter>
@@ -120,21 +121,29 @@ namespace TRAVEL_CORE.Repositories.Concrete
 
                 var reader = connection.RunQuery(commandText: "CRD.SP_CheckPerson", parameters: checkParameters, commandType: CommandType.StoredProcedure);
                 if (reader.Read())
-                    return 0;
+                    return new ResponseModel { Message = CommonTools.GetMessage((int)MessageCodes.CheckData), Status = true, Data = 0 };
                 else
                     generatedId = connection.Execute(tableName: "CRD.PersonDetails", operation: OperationType.Insert, parameters: parameters);
             }
 
-            return generatedId;
+            return new ResponseModel { Message = CommonTools.GetMessage((int)MessageCodes.Save), Status = true, Data = generatedId };
         }
 
-        public void ChangeStatus(ChangeStatus model)
+        public ResponseModel ChangeStatus(ChangeStatus model)
         {
+            int type = 0;
             List<SqlParameter> parameters = new List<SqlParameter>();
             parameters.Add(new SqlParameter("TableName", "CRD.PersonDetails"));
             parameters.Add(new SqlParameter("Id", model.Id));
             parameters.Add(new SqlParameter("Status", model.Status));
             connection.RunQuery(commandText: "SP_CHANGESTATUS", parameters: parameters, commandType: CommandType.StoredProcedure);
+
+            if (model.Status == 1)
+                type = (int)MessageCodes.Active;
+            else
+                type = (int)MessageCodes.Deactive;
+
+            return new ResponseModel { Message = CommonTools.GetMessage(type), Status = true };
         }
     }
 }

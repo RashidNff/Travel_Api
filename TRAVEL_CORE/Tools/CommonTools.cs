@@ -12,6 +12,8 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Data.SqlClient;
 using System.Net.Mail;
+using TRAVEL_CORE.DAL;
+using System.Data;
 
 namespace TRAVEL_CORE.Tools
 {
@@ -173,6 +175,19 @@ namespace TRAVEL_CORE.Tools
         public string ToTitleCase(string text)
         {
             return char.ToUpper(text.First()) + text.Substring(1).ToLower();
+        }
+
+        public static string GetMessage(int code)
+        {
+            Connection connection = new Connection();
+            List<SqlParameter> parameters = new();
+            parameters.Add(new SqlParameter("Code", code));
+
+            var reader = connection.RunQuery(commandText: "OBJ.SP_GetMessage", parameters: parameters, commandType: CommandType.StoredProcedure);
+            if (reader.Read())
+                return reader["Description"].ToString();
+
+            return "";
         }
 
     }

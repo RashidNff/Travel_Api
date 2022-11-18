@@ -7,8 +7,8 @@ namespace TRAVEL_CORE.Repositories.Abstract
     public interface IPersonRepository
     {
         DataTable GetPersonBrowseData(FilterParameter filterParameter);
-        int SavePerson(PersonData savePerson);
+        ResponseModel SavePerson(PersonData savePerson);
         PersonData GetPersonById(int contractId);
-        void ChangeStatus(ChangeStatus model);
+        ResponseModel ChangeStatus(ChangeStatus model);
     }
 }
