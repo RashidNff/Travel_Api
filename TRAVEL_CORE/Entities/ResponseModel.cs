@@ -4,6 +4,6 @@
     {
         public string? Message { get; set; }
         public bool? Status { get; set; }
-        public int? Data { get; set; }
+        public object? Data { get; set; }
     }
 }
