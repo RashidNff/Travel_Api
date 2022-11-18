@@ -30,20 +30,12 @@ namespace TRAVEL_CORE.Repositories.Concrete
             parameters.Add(new SqlParameter("FirmStatus", filterParameter.OrderStatus));
 
             if (filterParameter.OrderStatus == 0)
-                query = $@"Select F.Id, CompanyName, VOEN, Name + ' ' + Surname Fullname, Phone, Email,
-                            CASE
-	                            when F.Status = 3 then S.Value1
-	                            else Cast(F.Status as nvarchar(20))
-                            END Status,S.ColorCode  from CRD.Firms F
+                query = $@"Select F.Id, CompanyName, VOEN, Name + ' ' + Surname Fullname, Phone, Email,F.Status,S.ColorCode  from CRD.Firms F
                             Left Join  OBJ.SpeCodes S ON S.RefId = F.Status and S.Type = 'OrderStatus' and S.Status = 1
                             WHERE F.CreatedDate between @FromDate and @ToDate {stringFilter}
                             Order by F.Id DESC";
             else
-                query = $@"Select F.Id, CompanyName, VOEN, Name + ' ' + Surname Fullname, Phone, Email,
-                            CASE
-	                            when F.Status = 3 then S.Value1
-	                            else Cast(F.Status as nvarchar(20))
-                            END Status,S.ColorCode  from CRD.Firms F
+                query = $@"Select F.Id, CompanyName, VOEN, Name + ' ' + Surname Fullname, Phone, Email,F.Status,S.ColorCode  from CRD.Firms F
                             Left Join  OBJ.SpeCodes S ON S.RefId = F.Status and S.Type = 'OrderStatus' and S.Status = 1
                             WHERE F.CreatedDate between @FromDate and @ToDate and F.Status = @FirmStatus {stringFilter}
                             Order by F.Id DESC";
@@ -121,13 +113,19 @@ namespace TRAVEL_CORE.Repositories.Concrete
 
             return firm;
         }
-        public void ChangeOrderStatus(ChangeStatus model)
+        public void ChangeStatus(ChangeStatus model, bool contractCheck)
         {
             List<SqlParameter> parameters = new List<SqlParameter>();
             parameters.Add(new SqlParameter("TableName", "CRD.Firms"));
             parameters.Add(new SqlParameter("Id", model.Id));
             parameters.Add(new SqlParameter("Status", model.Status));
             connection.RunQuery(commandText: "SP_CHANGESTATUS", parameters: parameters, commandType: CommandType.StoredProcedure);
+
+            if (contractCheck)
+            {
+                string query = $@"Update CRD.Contract Set Status = 0 Where ClientId = {model.Id}";
+                connection.RunQuery(commandText: query);
+            }
         }
     }
 }

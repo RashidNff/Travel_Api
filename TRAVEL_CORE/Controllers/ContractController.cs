@@ -95,11 +95,11 @@ namespace TRAVEL_CORE.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPut]
-        public IActionResult ChangeOrderStatus(ChangeStatus model)
+        public IActionResult ChangeStatus(ChangeStatus model)
         {
             try
             {
-                _contractRepository.ChangeOrderStatus(model);
+                _contractRepository.ChangeStatus(model);
             }
             catch (Exception)
             {

@@ -9,6 +9,6 @@ namespace TRAVEL_CORE.Repositories.Abstract
         DataTable GetPersonBrowseData(FilterParameter filterParameter);
         int SavePerson(PersonData savePerson);
         PersonData GetPersonById(int contractId);
-        void ChangeOrderStatus(ChangeStatus model);
+        void ChangeStatus(ChangeStatus model);
     }
 }

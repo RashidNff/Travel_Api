@@ -79,11 +79,11 @@ namespace TRAVEL_CORE.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPut]
-        public IActionResult ChangeOrderStatus(ChangeStatus model)
+        public IActionResult ChangeStatus(ChangeStatus model)
         {
             try
             {
-                _personRepository.ChangeOrderStatus(model);
+                _personRepository.ChangeStatus(model);
             }
             catch (Exception)
             {

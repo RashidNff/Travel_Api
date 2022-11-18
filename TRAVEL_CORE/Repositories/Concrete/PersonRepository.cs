@@ -35,11 +35,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             parameters.Add(new SqlParameter("PersonStatus", filterParameter.OrderStatus));
 
             if (filterParameter.OrderStatus == 0)
-                query = $@"Select P.Id, Name +' '+ Surname Fullname, S2.Value1 Gender, S3.Value1 DocType, DocNumber, DocExpireDate, DocScan,
-                            CASE
-	                            when P.Status = 3 then S.Value1
-	                            else Cast(P.Status as nvarchar(20))
-                            END Status,S.ColorCode
+                query = $@"Select P.Id, Name +' '+ Surname Fullname, S2.Value1 Gender, S3.Value1 DocType, DocNumber, DocExpireDate, DocScan, P.Status,S.ColorCode
                             from CRD.PersonDetails P
                             Left Join  OBJ.SpeCodes S ON S.RefId = P.Status and S.Type = 'OrderStatus' and S.Status = 1
                             Left Join  OBJ.SpeCodes S2 ON S2.RefId = P.Gender and S2.Type = 'GenderType' and S2.Status = 1
@@ -47,11 +43,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                             WHERE P.CreatedDate between @FromDate and @ToDate {stringFilter}
                             Order by P.Id DESC";
             else
-                query = $@"Select P.Id, Name +' '+ Surname Fullname, S2.Value1 Gender, S3.Value1 DocType, DocNumber, DocExpireDate, DocScan,
-                            CASE
-	                            when P.Status = 3 then S.Value1
-	                            else Cast(P.Status as nvarchar(20))
-                            END Status,S.ColorCode
+                query = $@"Select P.Id, Name +' '+ Surname Fullname, S2.Value1 Gender, S3.Value1 DocType, DocNumber, DocExpireDate, DocScan, P.Status,S.ColorCode
                             from CRD.PersonDetails P
                             Left Join  OBJ.SpeCodes S ON S.RefId = P.Status and S.Type = 'OrderStatus' and S.Status = 1
                             Left Join  OBJ.SpeCodes S2 ON S2.RefId = P.Gender and S2.Type = 'GenderType' and S2.Status = 1
@@ -124,6 +116,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             {
                 List<SqlParameter> checkParameters = new List<SqlParameter>();
                 checkParameters.Add(new SqlParameter("DocNumber", savePerson.DocNumber));
+                checkParameters.Add(new SqlParameter("DocType", savePerson.DocType));
 
                 var reader = connection.RunQuery(commandText: "CRD.SP_CheckPerson", parameters: checkParameters, commandType: CommandType.StoredProcedure);
                 if (reader.Read())
@@ -135,7 +128,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             return generatedId;
         }
 
-        public void ChangeOrderStatus(ChangeStatus model)
+        public void ChangeStatus(ChangeStatus model)
         {
             List<SqlParameter> parameters = new List<SqlParameter>();
             parameters.Add(new SqlParameter("TableName", "CRD.PersonDetails"));

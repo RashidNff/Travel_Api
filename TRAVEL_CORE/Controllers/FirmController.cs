@@ -104,13 +104,14 @@ namespace TRAVEL_CORE.Controllers
         /// Change Firm Status by Id
         /// </summary>
         /// <param name="model"></param>
+        /// <param name="contractCheck"></param>
         /// <returns></returns>
         [HttpPut]
-        public IActionResult ChangeOrderStatus(ChangeStatus model)
+        public IActionResult ChangeStatus(ChangeStatus model, bool contractCheck)
         {
             try
             {
-                _firmRepository.ChangeOrderStatus(model);
+                _firmRepository.ChangeStatus(model, contractCheck);
             }
             catch (Exception)
             {
