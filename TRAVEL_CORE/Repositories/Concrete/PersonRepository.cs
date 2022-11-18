@@ -118,18 +118,19 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 parameters.Add(new SqlParameter("DocScan", savePerson.DocScan));
 
 
-            List<SqlParameter> checkParameters = new List<SqlParameter>();
-            checkParameters.Add(new SqlParameter("DocNumber", savePerson.DocNumber));
-
-            var reader = connection.RunQuery(commandText: "CRD.SP_CheckPerson", parameters: checkParameters, commandType: CommandType.StoredProcedure);
-            if (reader.Read())
-                return 0;
-
-
             if (savePerson.Id != 0)
-                generatedId = connection.Execute(tableName: "CRD.PersonDetails", operation: OperationType.Update, fieldName: "Id", ID: savePerson.Id, parameters: parameters);
+                    generatedId = connection.Execute(tableName: "CRD.PersonDetails", operation: OperationType.Update, fieldName: "Id", ID: savePerson.Id, parameters: parameters);
             else
-                generatedId = connection.Execute(tableName: "CRD.PersonDetails", operation: OperationType.Insert, parameters: parameters);
+            {
+                List<SqlParameter> checkParameters = new List<SqlParameter>();
+                checkParameters.Add(new SqlParameter("DocNumber", savePerson.DocNumber));
+
+                var reader = connection.RunQuery(commandText: "CRD.SP_CheckPerson", parameters: checkParameters, commandType: CommandType.StoredProcedure);
+                if (reader.Read())
+                    return 0;
+                else
+                    generatedId = connection.Execute(tableName: "CRD.PersonDetails", operation: OperationType.Insert, parameters: parameters);
+            }
 
             return generatedId;
         }
