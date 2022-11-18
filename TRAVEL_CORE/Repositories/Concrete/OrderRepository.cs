@@ -120,7 +120,6 @@ namespace TRAVEL_CORE.Repositories.Concrete
                     new SqlParameter("OrderNo", order.OrderNo),
                     new SqlParameter("OrderType", order.OrderType),
                     new SqlParameter("OrderDate", order.OrderDate),
-                    new SqlParameter("CompanyId", order.CompanyId),
                     new SqlParameter("VOEN", order.VOEN),
                     new SqlParameter("FullName", order.FullName),
                     new SqlParameter("Phone", order.Phone),
@@ -128,6 +127,9 @@ namespace TRAVEL_CORE.Repositories.Concrete
                     new SqlParameter("NoticePeriod", order.NoticePeriod),
                     new SqlParameter("CreatedBy", order.CreatedBy)
                 };
+
+            if (order.CompanyId != 0)
+                orderParameters.Add(new SqlParameter("CompanyId", order.CompanyId));
 
             if (order.Id != 0)
                 generatedOrderId = connection.Execute(tableName: "OPR.Orders", operation: OperationType.Update, fieldName: "Id", ID: order.Id, parameters: orderParameters);

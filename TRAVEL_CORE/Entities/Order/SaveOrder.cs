@@ -9,7 +9,7 @@ namespace TRAVEL_CORE.Entities.Order
         public string? OrderNo { get; set; }
         public int? OrderType { get; set; }
         public DateTime OrderDate { get; set; }
-        public int? CompanyId { get; set; }
+        public int? CompanyId { get; set; } = 0;
         public string? VOEN { get; set; }
         public string? FullName { get; set; }
         public string? Phone { get; set; }

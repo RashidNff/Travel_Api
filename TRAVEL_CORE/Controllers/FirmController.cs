@@ -108,7 +108,7 @@ namespace TRAVEL_CORE.Controllers
         /// <param name="contractCheck"></param>
         /// <returns></returns>
         [HttpPut]
-        public IActionResult ChangeStatus(ChangeStatus model, bool contractCheck)
+        public IActionResult ChangeStatus(ChangeStatus model, bool contractCheck = true)
         {
             ResponseModel responseModel = new();
             try
