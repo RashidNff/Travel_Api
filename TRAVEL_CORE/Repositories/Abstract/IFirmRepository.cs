@@ -10,6 +10,6 @@ namespace TRAVEL_CORE.Repositories.Abstract
         int SaveFirm(FirmData saveFirm);
         string GetFirmCode();
         FirmData GetFirmById(int contractId);
-        void ChangeOrderStatus(ChangeStatus model);
+        void ChangeStatus(ChangeStatus model, bool contractCheck);
     }
 }

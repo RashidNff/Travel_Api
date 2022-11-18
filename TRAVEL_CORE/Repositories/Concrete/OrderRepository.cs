@@ -57,12 +57,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
 	                            else Convert(varchar, H.BronExpiryDate, 105)
                             End HotelBronExpiryDate,
                             Convert(varchar, Orderdate, 105) Orderdate,
-                            Sc.SaleAmount,SC.AznAmount,
-                            CASE
-								when Ord.Status = 3 then S.Value1
-								else Cast(Ord.Status as nvarchar(20))
-							END
-                            Status, S.ColorCode
+                            Sc.SaleAmount,SC.AznAmount,Ord.Status, S.ColorCode
                             from OPR.Orders Ord
                             Left Join  OPR.Airways Air ON Air.OrderId = Ord.Id and Air.Status = 1
                             Left Join  OPR.Hotels H ON H.OrderId = Ord.Id and H.Status = 1
@@ -90,12 +85,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
 	                            else Convert(varchar, H.BronExpiryDate, 105)
                             End HotelBronExpiryDate,
                             Convert(varchar, Orderdate, 105) Orderdate,
-                            Sc.SaleAmount,SC.AznAmount,
-                            CASE
-								when Ord.Status = 3 then S.Value1
-								else Cast(Ord.Status as nvarchar(20))
-							END
-                            Status, S.ColorCode
+                            Sc.SaleAmount,SC.AznAmount,Ord.Status, S.ColorCode
                             from OPR.Orders Ord
                             Left Join  OPR.Airways Air ON Air.OrderId = Ord.Id and Air.Status = 1
                             Left Join  OPR.Hotels H ON H.OrderId = Ord.Id and H.Status = 1
@@ -135,6 +125,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                     new SqlParameter("FullName", order.FullName),
                     new SqlParameter("Phone", order.Phone),
                     new SqlParameter("Email", order.Email),
+                    new SqlParameter("NoticePeriod", order.NoticePeriod),
                     new SqlParameter("CreatedBy", order.CreatedBy)
                 };
 
@@ -397,6 +388,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 orderInfo.CompanyName = reader["CompanyName"].ToString();
                 orderInfo.CompanyId = Convert.ToInt32(reader["CompanyId"].ToString());
                 orderInfo.VOEN = reader["VOEN"].ToString();
+                orderInfo.NoticePeriod = Convert.ToInt32(reader["NoticePeriod"]);
             }
             reader.Close();
 

@@ -12,6 +12,7 @@
         public string? FullName { get; set; }
         public string? Phone { get; set; }
         public string? Email { get; set; }
+        public int? NoticePeriod { get; set; }
         public AirwayById? AirwayData { get; set; }
         public HotelById? HotelData { get; set; }
         public List<ServicesCost>? CostData { get; set; }

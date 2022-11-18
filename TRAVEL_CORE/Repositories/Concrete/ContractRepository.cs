@@ -33,23 +33,15 @@ namespace TRAVEL_CORE.Repositories.Concrete
             parameters.Add(new SqlParameter("OrderStatus", filterParameter.OrderStatus));
 
             if (filterParameter.OrderStatus == 0)
-                query = $@"Select C.Id, ContractNo, F.CompanyName, Convert(varchar, C.BeginDate, 105) BeginDate, Convert(varchar, C.EndDate, 105) EndDate, 
-                            CASE
-	                            when C.Status = 3 then S.Value1
-	                            else Cast(C.Status as nvarchar(20))
-                            END
-                            Status, S.ColorCode, Convert(varchar, C.CreatedDate, 105) CreatedDate  from CRD.Contract C
+                query = $@"Select C.Id, ContractNo, F.CompanyName, Convert(varchar, C.BeginDate, 105) BeginDate, Convert(varchar, C.EndDate, 105) EndDate, C.Status, S.ColorCode, 
+                            Convert(varchar, C.CreatedDate, 105) CreatedDate  from CRD.Contract C
                             Left JOIN CRD.Firms F ON F.Id = C.ClientId and F.Status = 1
                             Left Join  OBJ.SpeCodes S ON S.RefId = C.Status and S.Type = 'OrderStatus' and S.Status = 1
                             WHERE C.CreatedDate between @FromDate and @ToDate {stringFilter}
                             Order by C.Id DESC";
             else
-                query = $@"Select C.Id, ContractNo, F.CompanyName, Convert(varchar, C.BeginDate, 105) BeginDate, Convert(varchar, C.EndDate, 105) EndDate, 
-                            CASE
-	                            when C.Status = 3 then S.Value1
-	                            else Cast(C.Status as nvarchar(20))
-                            END
-                            Status, S.ColorCode, Convert(varchar, C.CreatedDate, 105) CreatedDate  from CRD.Contract C
+                query = $@"Select C.Id, ContractNo, F.CompanyName, Convert(varchar, C.BeginDate, 105) BeginDate, Convert(varchar, C.EndDate, 105) EndDate, C.Status, S.ColorCode, 
+                            Convert(varchar, C.CreatedDate, 105) CreatedDate  from CRD.Contract C
                             Left JOIN CRD.Firms F ON F.Id = C.ClientId and F.Status = 1
                             Left Join  OBJ.SpeCodes S ON S.RefId = C.Status and S.Type = 'OrderStatus' and S.Status = 1
                             WHERE C.CreatedDate between @FromDate and @ToDate and C.Status = @OrderStatus {stringFilter}
@@ -125,7 +117,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             return contract;
         }
 
-        public void ChangeOrderStatus(ChangeStatus model)
+        public void ChangeStatus(ChangeStatus model)
         {
             List<SqlParameter> parameters = new List<SqlParameter>();
             parameters.Add(new SqlParameter("TableName", "CRD.Contract"));

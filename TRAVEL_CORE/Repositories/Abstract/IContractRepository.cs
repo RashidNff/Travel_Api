@@ -11,6 +11,6 @@ namespace TRAVEL_CORE.Repositories.Abstract
         int SaveContract(ContractData saveContract);
         string GetContractNo();
         ContractById GetContractById(int contractId);
-        void ChangeOrderStatus(ChangeStatus model);
+        void ChangeStatus(ChangeStatus model);
     }
 }
