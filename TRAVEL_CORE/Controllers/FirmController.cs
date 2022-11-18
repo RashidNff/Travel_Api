@@ -67,17 +67,18 @@ namespace TRAVEL_CORE.Controllers
         {
             firm.CreatedBy = CommonTools.GetUserId(User.Claims.ToList());
             int firmId = 0;
+            ResponseModel model = new();
 
             try
             {
-                firmId = _firmRepository.SaveFirm(firm);
+                model = _firmRepository.SaveFirm(firm);
             }
             catch (Exception)
             {
-                return BadRequest(new { message = "Unexpected error occurred!" });
+                return BadRequest(new ResponseModel { Message = "Unexpected error occurred!", Status = false });
             }
 
-            return Ok(new { firmId = firmId });
+            return Ok(model);
         }
 
         /// <summary>
@@ -109,15 +110,16 @@ namespace TRAVEL_CORE.Controllers
         [HttpPut]
         public IActionResult ChangeStatus(ChangeStatus model, bool contractCheck)
         {
+            ResponseModel responseModel = new();
             try
             {
-                _firmRepository.ChangeStatus(model, contractCheck);
+                responseModel = _firmRepository.ChangeStatus(model, contractCheck);
             }
             catch (Exception)
             {
-                return BadRequest(new { message = "Unexpected error occurred!" });
+                return BadRequest(new ResponseModel { Message = "Unexpected error occurred!", Status = false });
             }
-            return NoContent();
+            return Ok(model);
         }
     }
 }

@@ -62,18 +62,18 @@ namespace TRAVEL_CORE.Controllers
         public IActionResult SaveContract(ContractData contract)
         {
             contract.CreatedBy = CommonTools.GetUserId(User.Claims.ToList());
-            int contractId = 0;
+            ResponseModel model = new();
 
             try
             {
-                contractId = _contractRepository.SaveContract(contract);
+                model = _contractRepository.SaveContract(contract);
             }
             catch (Exception)
             {
-                return BadRequest(new { message = "Unexpected error occurred!" });
+                return BadRequest(new ResponseModel { Message = "Unexpected error occurred!", Status = false});
             }
 
-            return Ok(new { contractId = contractId });
+            return Ok(model);
         }
 
         [HttpGet]
@@ -97,15 +97,16 @@ namespace TRAVEL_CORE.Controllers
         [HttpPut]
         public IActionResult ChangeStatus(ChangeStatus model)
         {
+            ResponseModel responseModel = new();
             try
             {
-                _contractRepository.ChangeStatus(model);
+                responseModel = _contractRepository.ChangeStatus(model);
             }
             catch (Exception)
             {
-                return BadRequest(new { message = "Unexpected error occurred!" });
+                return BadRequest(new ResponseModel { Message = "Unexpected error occurred!", Status = false });
             }
-            return NoContent();
+            return Ok(model);
         }
 
     }

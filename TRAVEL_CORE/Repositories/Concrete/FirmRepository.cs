@@ -5,7 +5,9 @@ using TRAVEL_CORE.DAL;
 using TRAVEL_CORE.Entities;
 using TRAVEL_CORE.Entities.Contract;
 using TRAVEL_CORE.Entities.Firm;
+using TRAVEL_CORE.Enums;
 using TRAVEL_CORE.Repositories.Abstract;
+using TRAVEL_CORE.Tools;
 
 namespace TRAVEL_CORE.Repositories.Concrete
 {
@@ -44,7 +46,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             return data;
         }
 
-        public int SaveFirm(FirmData saveFirm)
+        public ResponseModel SaveFirm(FirmData saveFirm)
         {
             int generatedId = 0;
             List<SqlParameter> parameters = new List<SqlParameter>
@@ -64,7 +66,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             else
                 generatedId = connection.Execute(tableName: "CRD.Firms", operation: OperationType.Insert, parameters: parameters);
 
-            return generatedId;
+            return new ResponseModel { Message = CommonTools.GetMessage((int)MessageCodes.Save), Status = true, Data = generatedId };
         }
 
         public string GetFirmCode()
@@ -113,8 +115,9 @@ namespace TRAVEL_CORE.Repositories.Concrete
 
             return firm;
         }
-        public void ChangeStatus(ChangeStatus model, bool contractCheck)
+        public ResponseModel ChangeStatus(ChangeStatus model, bool contractCheck)
         {
+            int type = 0;
             List<SqlParameter> parameters = new List<SqlParameter>();
             parameters.Add(new SqlParameter("TableName", "CRD.Firms"));
             parameters.Add(new SqlParameter("Id", model.Id));
@@ -126,6 +129,14 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 string query = $@"Update CRD.Contract Set Status = 0 Where ClientId = {model.Id}";
                 connection.RunQuery(commandText: query);
             }
+
+
+            if (model.Status == 1)
+                type = (int)MessageCodes.Active;
+            else
+                type = (int)MessageCodes.Deactive;
+
+            return new ResponseModel { Message = CommonTools.GetMessage(type), Status = true };
         }
     }
 }

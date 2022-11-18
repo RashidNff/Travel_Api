@@ -7,7 +7,9 @@ using TRAVEL_CORE.DAL;
 using TRAVEL_CORE.Entities;
 using TRAVEL_CORE.Entities.Contract;
 using TRAVEL_CORE.Entities.TemplateCost;
+using TRAVEL_CORE.Enums;
 using TRAVEL_CORE.Repositories.Abstract;
+using TRAVEL_CORE.Tools;
 
 namespace TRAVEL_CORE.Repositories.Concrete
 {
@@ -35,14 +37,14 @@ namespace TRAVEL_CORE.Repositories.Concrete
             if (filterParameter.OrderStatus == 0)
                 query = $@"Select C.Id, ContractNo, F.CompanyName, Convert(varchar, C.BeginDate, 105) BeginDate, Convert(varchar, C.EndDate, 105) EndDate, C.Status, S.ColorCode, 
                             Convert(varchar, C.CreatedDate, 105) CreatedDate  from CRD.Contract C
-                            Left JOIN CRD.Firms F ON F.Id = C.ClientId and F.Status = 1
+                            Left JOIN CRD.Firms F ON F.Id = C.ClientId
                             Left Join  OBJ.SpeCodes S ON S.RefId = C.Status and S.Type = 'OrderStatus' and S.Status = 1
                             WHERE C.CreatedDate between @FromDate and @ToDate {stringFilter}
                             Order by C.Id DESC";
             else
                 query = $@"Select C.Id, ContractNo, F.CompanyName, Convert(varchar, C.BeginDate, 105) BeginDate, Convert(varchar, C.EndDate, 105) EndDate, C.Status, S.ColorCode, 
                             Convert(varchar, C.CreatedDate, 105) CreatedDate  from CRD.Contract C
-                            Left JOIN CRD.Firms F ON F.Id = C.ClientId and F.Status = 1
+                            Left JOIN CRD.Firms F ON F.Id = C.ClientId
                             Left Join  OBJ.SpeCodes S ON S.RefId = C.Status and S.Type = 'OrderStatus' and S.Status = 1
                             WHERE C.CreatedDate between @FromDate and @ToDate and C.Status = @OrderStatus {stringFilter}
                             Order by C.Id DESC";
@@ -51,7 +53,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             return data;
         }
 
-        public int SaveContract(ContractData saveContract)
+        public ResponseModel SaveContract(ContractData saveContract)
         {
             int generatedId = 0;
             List<SqlParameter> parameters = new List<SqlParameter>
@@ -64,11 +66,11 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 };
 
             if (saveContract.Id != 0)
-                generatedId = connection.Execute(tableName: "CRD.Contract", operation: OperationType.Update, fieldName: "Id", ID: saveContract.Id, parameters: parameters);
+                generatedId =  connection.Execute(tableName: "CRD.Contract", operation: OperationType.Update, fieldName: "Id", ID: saveContract.Id, parameters: parameters);
             else
                 generatedId = connection.Execute(tableName: "CRD.Contract", operation: OperationType.Insert, parameters: parameters);
 
-            return generatedId;
+            return new ResponseModel { Message = CommonTools.GetMessage((int)MessageCodes.Save), Status = true, Data = generatedId };
         }
 
         public string GetContractNo()
@@ -117,13 +119,21 @@ namespace TRAVEL_CORE.Repositories.Concrete
             return contract;
         }
 
-        public void ChangeStatus(ChangeStatus model)
+        public ResponseModel ChangeStatus(ChangeStatus model)
         {
-            List<SqlParameter> parameters = new List<SqlParameter>();
+            int type = 0;
+            List <SqlParameter> parameters = new List<SqlParameter>();
             parameters.Add(new SqlParameter("TableName", "CRD.Contract"));
             parameters.Add(new SqlParameter("Id", model.Id));
             parameters.Add(new SqlParameter("Status", model.Status));
             connection.RunQuery(commandText: "SP_CHANGESTATUS", parameters: parameters, commandType: CommandType.StoredProcedure);
+
+            if (model.Status == 1)
+                type = (int)MessageCodes.Active;
+            else
+                type = (int)MessageCodes.Deactive;
+
+                return new ResponseModel { Message = CommonTools.GetMessage(type), Status = true };
         }
 
     }

@@ -10,10 +10,10 @@ namespace TRAVEL_CORE.Repositories.Abstract
     {
         DataTable GetOrderBrowseData(FilterParameter filterParameter);
         OrderInfo GetOrderById(int ordId);
-        int SaveOrder(SaveOrder order);
+        ResponseModel SaveOrder(SaveOrder order);
         string GetOrderNo();
         List<TemplateCostLinesById> GetTemplateCostData(int templateCostId);
-        void ChangeOrderStatus(ChangeStatus model);
+        ResponseModel ChangeOrderStatus(ChangeStatus model);
         void SendMail();
 
     }

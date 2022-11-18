@@ -112,7 +112,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             return data;
         }
 
-        public int SaveOrder(SaveOrder order)
+        public ResponseModel SaveOrder(SaveOrder order)
         {
             int generatedOrderId = 0;
             List<SqlParameter> orderParameters = new List<SqlParameter>
@@ -150,7 +150,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 SaveCostData(order.CostData, generatedOrderId);
 
 
-            return generatedOrderId;
+            return new ResponseModel { Message = CommonTools.GetMessage((int)MessageCodes.Save), Status = true, Data = generatedOrderId };
         }
 
         private void DeleteCostData(int generatedOrderId)
@@ -553,13 +553,21 @@ namespace TRAVEL_CORE.Repositories.Concrete
             return templateCosts;
         }
 
-        public void ChangeOrderStatus(ChangeStatus model)
+        public ResponseModel ChangeOrderStatus(ChangeStatus model)
         {
+            int type = 0;
             List<SqlParameter> parameters = new List<SqlParameter>();
             parameters.Add(new SqlParameter("TableName", "OPR.Orders"));
             parameters.Add(new SqlParameter("Id", model.Id));
             parameters.Add(new SqlParameter("Status", model.Status));
             connection.RunQuery(commandText: "SP_CHANGESTATUS", parameters: parameters, commandType: CommandType.StoredProcedure);
+
+            if (model.Status == 1)
+                type = (int)MessageCodes.Active;
+            else
+                type = (int)MessageCodes.Deactive;
+
+            return new ResponseModel { Message = CommonTools.GetMessage(type), Status = true };
         }
 
         public void SendMail()

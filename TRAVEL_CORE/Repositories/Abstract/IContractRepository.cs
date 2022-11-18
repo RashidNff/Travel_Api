@@ -8,9 +8,9 @@ namespace TRAVEL_CORE.Repositories.Abstract
     public interface IContractRepository
     {
         DataTable GetContractBrowseData(FilterParameter filterParameter);
-        int SaveContract(ContractData saveContract);
+        ResponseModel SaveContract(ContractData saveContract);
         string GetContractNo();
         ContractById GetContractById(int contractId);
-        void ChangeStatus(ChangeStatus model);
+        ResponseModel ChangeStatus(ChangeStatus model);
     }
 }

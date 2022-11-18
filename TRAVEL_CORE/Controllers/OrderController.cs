@@ -49,17 +49,18 @@ namespace TRAVEL_CORE.Controllers
             order.CreatedBy = CommonTools.GetUserId(User.Claims.ToList());
 
             int orderId = 0;
+            ResponseModel model = new();
 
             try
             {
-                orderId = _orderRepository.SaveOrder(order);
+                model = _orderRepository.SaveOrder(order);
             }
             catch (Exception)
             {
-                return BadRequest(new { message = "Unexpected error occurred!" });
+                return BadRequest(new ResponseModel { Message = "Unexpected error occurred!", Status = false });
             }
 
-            return Ok(new { orderId = orderId });
+            return Ok(model);
         }
         [AllowAnonymous]
         [HttpGet]
@@ -115,13 +116,14 @@ namespace TRAVEL_CORE.Controllers
         [HttpPut]
         public IActionResult ChangeOrderStatus(ChangeStatus model)
         {
+            ResponseModel responseModel = new();
             try
             {
-                _orderRepository.ChangeOrderStatus(model);
+                responseModel = _orderRepository.ChangeOrderStatus(model);
             }
             catch (Exception)
             {
-                return BadRequest(new { message = "Unexpected error occurred!" });
+                return BadRequest(new ResponseModel { Message = "Unexpected error occurred!", Status = false });
             }
             return NoContent();
         }
