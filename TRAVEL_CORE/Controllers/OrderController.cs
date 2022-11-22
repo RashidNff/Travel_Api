@@ -128,18 +128,42 @@ namespace TRAVEL_CORE.Controllers
             return Ok(responseModel);
         }
 
+
+        /// <summary>
+        /// Send Order Id to get Cost Lines
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet]
-        public IActionResult SendMail()
+        public IActionResult GetOrderCostsById(int orderId)
         {
             try
             {
-                _orderRepository.SendMail();
+                return Ok(_orderRepository.GetOrderCostsById(orderId));
             }
             catch (Exception)
             {
                 return BadRequest(new { message = "Unexpected error occurred!" });
             }
-            return NoContent();
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public IActionResult SaveOrderCosts(OrderCosts costs)
+        {
+            ResponseModel model = new();
+
+            try
+            {
+                model = _orderRepository.SaveOrderCosts(costs);
+            }
+            catch (Exception)
+            {
+                return BadRequest(new ResponseModel { Message = "Unexpected error occurred!", Status = false });
+            }
+
+            return Ok(model);
         }
 
 

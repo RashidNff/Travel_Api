@@ -99,14 +99,6 @@ namespace TRAVEL_CORE.Repositories.Concrete
                             WHERE Orderdate between @FromDate and @ToDate and Ord.Status = @OrderStatus {stringFilter}
                             Order by Ord.ID desc";
 
-            try
-            {
-                SendMail();
-            }
-            catch (Exception)
-            {
-            }
-            
 
             var data = connection.GetData(commandText: query, parameters: parameters);
             return data;
@@ -586,34 +578,48 @@ namespace TRAVEL_CORE.Repositories.Concrete
             return new ResponseModel { Message = CommonTools.GetMessage(type), Status = true, Data = null };
         }
 
-        public void SendMail()
+        public List<OrderCosts> GetOrderCostsById(int ordId)
         {
-            OrderMail orderInfo = new();
+            List<OrderCosts>? orderCosts = new();
 
-            var reader = connection.RunQuery(commandText: "OPR.SP_GetOrderInfo", commandType: CommandType.StoredProcedure);
-            while (reader.Read())
-            {
-                orderInfo.OrderNo = reader["OrderNo"].ToString();
-                orderInfo.Orderdate = reader["Orderdate"].ToString();
-                orderInfo.FullName = reader["Fullname"].ToString();
-                orderInfo.Email = reader["Email"].ToString();
-                orderInfo.OperationType = reader["OperationType"].ToString();
-                orderInfo.BronExpiryDate = reader["BronExpiryDate"].ToString();
-                orderInfo.AirId = Convert.ToInt32(reader["AirId"]);
-                orderInfo.HotelId = Convert.ToInt32(reader["HotelId"]);
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            parameters.Add(new SqlParameter("OrderId", ordId));
 
-                List<SqlParameter> Parameters = new List<SqlParameter>();
-                Parameters.Add(new SqlParameter("EmailStatus", 1));
+            var costLines = connection.GetData(commandText: "CRD.SP_GetOrderCostsByOrderId", parameters: parameters, commandType: CommandType.StoredProcedure);
+            orderCosts = JsonConvert.DeserializeObject<List<OrderCosts>>(JsonConvert.SerializeObject(costLines));
 
-                if (orderInfo.AirId != 0)
-                    connection.Execute(tableName: "OPR.Airways", operation: OperationType.Update, fieldName: "Id", ID: orderInfo.AirId, parameters: Parameters);
-                if (orderInfo.HotelId != 0)
-                    connection.Execute(tableName: "OPR.Hotels", operation: OperationType.Update, fieldName: "Id", ID: orderInfo.HotelId, parameters: Parameters);
-
-                string message = $"<div style=\"font-size:16px\">Salam, {orderInfo.FullName}! <br/><br/>{orderInfo.Orderdate} tarixində verilən <b>{orderInfo.OrderNo} </b> nömrəli sifarişin bron müddətinin bitməsinə 1 gün qalıb.<br/><br/><br/> <b style=\"margin-right:40px\">Əməliyyatın tipi:</b> {orderInfo.OperationType}<br/><b style=\"margin-right:30px\">Bron bitmə tarixi:</b> {orderInfo.BronExpiryDate}<br/> <b>Ətraflı məlumat üçün əlaqə:</b> 055 555 55 55<br/></div>";
-                CommonTools.SendEmail(orderInfo.Email, "Məlumatlandırma", message);
-            }
-            reader.Close();
+            return orderCosts;
         }
+
+        public ResponseModel SaveOrderCosts(OrderCosts costs)
+        {
+            int generatedOrderId = 0;
+            //List<SqlParameter> Parameters = new List<SqlParameter>
+            //    {
+            //        new SqlParameter("OrderNo", order.OrderNo),
+            //        new SqlParameter("OrderType", order.OrderType),
+            //        new SqlParameter("OrderDate", order.OrderDate),
+            //        new SqlParameter("VOEN", order.VOEN),
+            //        new SqlParameter("FullName", order.FullName),
+            //        new SqlParameter("Phone", order.Phone),
+            //        new SqlParameter("Email", order.Email),
+            //        new SqlParameter("CreatedBy", order.CreatedBy)
+            //    };
+
+            //if (order.CompanyId != 0)
+            //    orderParameters.Add(new SqlParameter("CompanyId", order.CompanyId));
+
+            //if (order.Id != 0)
+            //    generatedOrderId = connection.Execute(tableName: "OPR.Orders", operation: OperationType.Update, fieldName: "Id", ID: order.Id, parameters: orderParameters);
+            //else
+            //    generatedOrderId = connection.Execute(tableName: "OPR.Orders", operation: OperationType.Insert, parameters: orderParameters);
+
+
+
+            return new ResponseModel { Message = CommonTools.GetMessage((int)MessageCodes.Save), Status = true, Data = generatedOrderId };
+        }
+
+
+
     }
 }
