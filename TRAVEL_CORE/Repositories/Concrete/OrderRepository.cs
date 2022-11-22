@@ -161,8 +161,8 @@ namespace TRAVEL_CORE.Repositories.Concrete
             List<SqlParameter> airwayParameters = new List<SqlParameter>
                 {
                     new SqlParameter("OrderId", orderId),
-                    new SqlParameter("FromPoint", airwayModel.FromPoint),
-                    new SqlParameter("ToPoint", airwayModel.ToPoint),
+                    new SqlParameter("FromPoint", airwayModel.FromPointId),
+                    new SqlParameter("ToPoint", airwayModel.ToPointId),
                     new SqlParameter("DepartureDate", airwayModel.DepartureDate),
                     new SqlParameter("ReturnDate", airwayModel.ReturnDate),
                     new SqlParameter("FlightClassId", airwayModel.FlightClassId),
