@@ -90,7 +90,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 List<SqlParameter> parameters = new List<SqlParameter>
                 {
                     new SqlParameter("TemplateCostId", templateCostId),
-                    new SqlParameter("Vender", templateCost.Vender),
+                    new SqlParameter("Vender", templateCost.VenderId),
                     new SqlParameter("VenderService", templateCost.VenderService),
                     new SqlParameter("Qty", templateCost.Qty),
                     new SqlParameter("VenderUnitPrice", templateCost.VenderUnitPrice),
