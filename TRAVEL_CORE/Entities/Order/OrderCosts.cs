@@ -8,6 +8,7 @@ namespace TRAVEL_CORE.Entities.Order
     public class OrderCosts
     {
         public int Id { get; set; }
+        public int OrderId { get; set; }
         public int Vender { get; set; }
         public int VenderService { get; set; }
         public int Qty { get; set; }

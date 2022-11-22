@@ -15,7 +15,7 @@ namespace TRAVEL_CORE.Repositories.Abstract
         List<TemplateCostLinesById> GetTemplateCostData(int templateCostId);
         ResponseModel ChangeOrderStatus(ChangeStatus model);
         List<OrderCosts> GetOrderCostsById(int ordId);
-        ResponseModel SaveOrderCosts(OrderCosts costs);
+        ResponseModel SaveOrderCosts(List<OrderCosts> costs);
 
 
     }

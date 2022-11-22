@@ -150,7 +150,7 @@ namespace TRAVEL_CORE.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public IActionResult SaveOrderCosts(OrderCosts costs)
+        public IActionResult SaveOrderCosts(List<OrderCosts> costs)
         {
             ResponseModel model = new();
 

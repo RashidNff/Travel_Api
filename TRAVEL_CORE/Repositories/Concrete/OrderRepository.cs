@@ -18,6 +18,7 @@ using TRAVEL_CORE.Entities.TemplateCost;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using System.Globalization;
 using System.Security.Cryptography;
+using System.Reflection.Metadata;
 
 namespace TRAVEL_CORE.Repositories.Concrete
 {
@@ -591,32 +592,34 @@ namespace TRAVEL_CORE.Repositories.Concrete
             return orderCosts;
         }
 
-        public ResponseModel SaveOrderCosts(OrderCosts costs)
+        public ResponseModel SaveOrderCosts(List<OrderCosts> costs)
         {
-            int generatedOrderId = 0;
-            //List<SqlParameter> Parameters = new List<SqlParameter>
-            //    {
-            //        new SqlParameter("OrderNo", order.OrderNo),
-            //        new SqlParameter("OrderType", order.OrderType),
-            //        new SqlParameter("OrderDate", order.OrderDate),
-            //        new SqlParameter("VOEN", order.VOEN),
-            //        new SqlParameter("FullName", order.FullName),
-            //        new SqlParameter("Phone", order.Phone),
-            //        new SqlParameter("Email", order.Email),
-            //        new SqlParameter("CreatedBy", order.CreatedBy)
-            //    };
+            foreach (var cost in costs)
+            {
+                List<SqlParameter> Parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("OrderId", cost.OrderId),
+                    new SqlParameter("Vender", cost.Vender),
+                    new SqlParameter("VenderService", cost.VenderService),
+                    new SqlParameter("Qty", cost.Qty),
+                    new SqlParameter("VenderUnitPrice", cost.VenderUnitPrice),
+                    new SqlParameter("VenderAmount", cost.VenderAmount),
+                    new SqlParameter("SaleUnitPrice", cost.SaleUnitPrice),
+                    new SqlParameter("SaleAmount", cost.SaleAmount),
+                    new SqlParameter("Currency", cost.Currency),
+                    new SqlParameter("CurrencyRate", Math.Round(cost.CurrencyRate,4)),
+                    new SqlParameter("CurrencyAmount", cost.CurrencyAmount),
+                    new SqlParameter("Status", cost.Status)
+                };
 
-            //if (order.CompanyId != 0)
-            //    orderParameters.Add(new SqlParameter("CompanyId", order.CompanyId));
+            if (cost.Id != 0)
+                connection.Execute(tableName: "OPR.ServicesCost", operation: OperationType.Update, fieldName: "Id", ID: cost.Id, parameters: Parameters);
+            else
+                connection.Execute(tableName: "OPR.ServicesCost", operation: OperationType.Insert, parameters: Parameters);
+                
+            }
 
-            //if (order.Id != 0)
-            //    generatedOrderId = connection.Execute(tableName: "OPR.Orders", operation: OperationType.Update, fieldName: "Id", ID: order.Id, parameters: orderParameters);
-            //else
-            //    generatedOrderId = connection.Execute(tableName: "OPR.Orders", operation: OperationType.Insert, parameters: orderParameters);
-
-
-
-            return new ResponseModel { Message = CommonTools.GetMessage((int)MessageCodes.Save), Status = true, Data = generatedOrderId };
+            return new ResponseModel { Message = CommonTools.GetMessage((int)MessageCodes.Save), Status = true, Data = null };
         }
 
 
