@@ -145,6 +145,23 @@ namespace TRAVEL_CORE.Controllers
                 return BadRequest(new { message = "Unexpected error occurred!" });
             }
         }
+
+        /// <summary>
+        /// Get Airport Id And Text
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult GetAirport()
+        {
+            try
+            {
+                return Ok(JsonConvert.SerializeObject(_commonRepository.GetAirport()));
+            }
+            catch (Exception)
+            {
+                return BadRequest(new { message = "Unexpected error occurred!" });
+            }
+        }
     }
 
 }

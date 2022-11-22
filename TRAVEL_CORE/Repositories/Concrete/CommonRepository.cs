@@ -50,6 +50,10 @@ namespace TRAVEL_CORE.Repositories.Concrete
             return data;
         }
 
-
+        public DataTable GetAirport()
+        {
+            var data = connection.GetData(commandText: "OBJ.GetAirportList", commandType: CommandType.StoredProcedure);
+            return data;
+        }
     }
 }

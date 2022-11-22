@@ -394,8 +394,10 @@ namespace TRAVEL_CORE.Repositories.Concrete
             {
                 airwayInfo.Id = Convert.ToInt32(readerAir["Id"]);
                 airwayInfo.OrderId = Convert.ToInt32(readerAir["OrderId"].ToString());
-                airwayInfo.FromPoint = readerAir["FromPoint"].ToString();
-                airwayInfo.ToPoint = readerAir["ToPoint"].ToString();
+                airwayInfo.FromPointId = Convert.ToInt32(readerAir["FromPointId"]);
+                airwayInfo.FromPointName = readerAir["FromPointName"].ToString();
+                airwayInfo.ToPointId = Convert.ToInt32(readerAir["ToPointId"]);
+                airwayInfo.ToPointName = readerAir["ToPointName"].ToString();
                 airwayInfo.DepartureDate = Convert.ToDateTime(readerAir["DepartureDate"].ToString(), CultureInfo.CreateSpecificCulture("en-GB"));
                 airwayInfo.ReturnDate = Convert.ToDateTime(readerAir["ReturnDate"].ToString(), CultureInfo.CreateSpecificCulture("en-GB"));
                 airwayInfo.FlightClassId = Convert.ToInt32(readerAir["FlightClassId"].ToString());
@@ -620,7 +622,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             }
 
             List<SqlParameter> orderParameters = new List<SqlParameter>();
-            orderParameters.Add(new SqlParameter("Status", 0));
+            orderParameters.Add(new SqlParameter("Status", 2));
             connection.Execute(tableName: "OPR.Orders", operation: OperationType.Update, fieldName: "Id", ID: orderId, parameters: orderParameters);
 
 

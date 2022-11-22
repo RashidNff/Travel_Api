@@ -10,5 +10,6 @@ namespace TRAVEL_CORE.Repositories.Abstract
         DataTable GetFirmInfoById(int id);
         DataTable GetPersonInfoByDocNumber(int docType, string docNumber);
         DataTable GetPersonDocNumbers();
+        DataTable GetAirport();
     }
 }

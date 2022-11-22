@@ -4,8 +4,10 @@
     {
         public int Id { get; set; }
         public int OrderId { get; set; }
-        public string? FromPoint { get; set; }
-        public string? ToPoint { get; set; }
+        public int? FromPointId { get; set; }
+        public string? FromPointName { get; set; }
+        public int? ToPointId { get; set; }
+        public string? ToPointName { get; set; }
         public DateTime DepartureDate { get; set; }
         public DateTime ReturnDate { get; set; }
         public int FlightClassId { get; set; }
