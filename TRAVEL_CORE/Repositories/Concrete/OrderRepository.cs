@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Reflection.Metadata;
+using Microsoft.Extensions.Hosting;
 
 namespace TRAVEL_CORE.Repositories.Concrete
 {
@@ -149,7 +150,9 @@ namespace TRAVEL_CORE.Repositories.Concrete
 
         private void DeleteCostData(int generatedOrderId)
         {
-            connection.Execute(tableName: "OPR.ServicesCost", operation: OperationType.Delete, fieldName: "OrderId", ID: generatedOrderId);
+            string query = $@"Delete OPR.ServicesCost where OrderId = {generatedOrderId} and Status = 1";
+            var data = connection.GetData(commandText: query);
+            //connection.Execute(tableName: "OPR.ServicesCost", operation: OperationType.Delete, fieldName: "OrderId", ID: generatedOrderId);
         }
 
         private void SaveAirwayData(Airway airwayModel, int orderId)
@@ -339,8 +342,6 @@ namespace TRAVEL_CORE.Repositories.Concrete
 
         private void SaveCostData(List<ServicesCost> costData, int orderId)
         {
-            connection.Execute(tableName: "OPR.ServicesCost", operation: OperationType.Delete, fieldName: "OrderId", ID: orderId);
-
             foreach (var cost in costData)
             {
                 List<SqlParameter> costParameters = new List<SqlParameter>
@@ -592,7 +593,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             return orderCosts;
         }
 
-        public ResponseModel SaveOrderCosts(List<OrderCosts> costs)
+        public ResponseModel SaveOrderCosts(List<OrderCosts> costs, int orderId)
         {
             foreach (var cost in costs)
             {
@@ -616,8 +617,12 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 connection.Execute(tableName: "OPR.ServicesCost", operation: OperationType.Update, fieldName: "Id", ID: cost.Id, parameters: Parameters);
             else
                 connection.Execute(tableName: "OPR.ServicesCost", operation: OperationType.Insert, parameters: Parameters);
-                
             }
+
+            List<SqlParameter> orderParameters = new List<SqlParameter>();
+            orderParameters.Add(new SqlParameter("Status", 0));
+            connection.Execute(tableName: "OPR.Orders", operation: OperationType.Update, fieldName: "Id", ID: orderId, parameters: orderParameters);
+
 
             return new ResponseModel { Message = CommonTools.GetMessage((int)MessageCodes.Save), Status = true, Data = null };
         }
