@@ -47,7 +47,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             if (filterParameter.OrderStatus == 0)
                 query = $@"Select OrderNo,Ord.ID, F.CompanyName, FullName, Ord.Phone,
                             --AirWay
-                             FromPoint, ToPoint, Convert(varchar, DepartureDate, 105) DepartureDate, Convert(varchar, ReturnDate, 105) ReturnDate, PassengersCount,
+                             ALF.IATA +' - '+ ALF.Region FromPoint,ALT.IATA +' - '+ ALT.Region ToPoint,  Convert(varchar, DepartureDate, 105) DepartureDate, Convert(varchar, ReturnDate, 105) ReturnDate, PassengersCount,
                             Case 
 	                            when Air.Bron = 0  then null
 	                            else Convert(varchar, Air.BronExpiryDate, 105)
@@ -65,6 +65,8 @@ namespace TRAVEL_CORE.Repositories.Concrete
                             Left Join  OPR.Hotels H ON H.OrderId = Ord.Id and H.Status = 1
                             Left Join  OBJ.SpeCodes S ON S.RefId = Ord.Status and S.Type = 'OrderStatus' and S.Status = 1
 							Left Join  CRD.Firms F ON F.Id = Ord.CompanyId
+							Left Join  OBJ.AirportList ALF ON ALF.Id = Air.FromPoint
+							Left Join  OBJ.AirportList ALT ON ALT.Id = Air.ToPoint
                             Left Join  (SELECT OperationId,COUNT(*) PCOUNT FROM CRD.OrderPerson WHERE OperationType=2 GROUP BY OperationId) P ON p.OperationId = H.Id 
                             Left Join  (SELECT OrderId,SUM(SaleAmount) SaleAmount,--CurrencyRate rate,
                             SUM(CurrencyAmount) AznAmount 
@@ -75,7 +77,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             else
                 query = $@"Select OrderNo,Ord.ID, F.CompanyName, FullName, Ord.Phone,
                             --AirWay
-                             FromPoint, ToPoint, Convert(varchar, DepartureDate, 105) DepartureDate, Convert(varchar, ReturnDate, 105) ReturnDate, PassengersCount,
+                            ALF.IATA +' - '+ ALF.Region FromPoint,ALT.IATA +' - '+ ALT.Region ToPoint, Convert(varchar, DepartureDate, 105) DepartureDate, Convert(varchar, ReturnDate, 105) ReturnDate, PassengersCount,
                             Case 
 	                            when Air.Bron = 0  then null
 	                            else Convert(varchar, Air.BronExpiryDate, 105)
@@ -93,6 +95,8 @@ namespace TRAVEL_CORE.Repositories.Concrete
                             Left Join  OPR.Hotels H ON H.OrderId = Ord.Id and H.Status = 1
                             Left Join  OBJ.SpeCodes S ON S.RefId = Ord.Status and S.Type = 'OrderStatus' and S.Status = 1
 							Left Join  CRD.Firms F ON F.Id = Ord.CompanyId
+							Left Join  OBJ.AirportList ALF ON ALF.Id = Air.FromPoint
+							Left Join  OBJ.AirportList ALT ON ALT.Id = Air.ToPoint
                             Left Join  (SELECT OperationId,COUNT(*) PCOUNT FROM CRD.OrderPerson WHERE OperationType=2 GROUP BY OperationId) P ON p.OperationId = H.Id 
                             Left Join  (SELECT OrderId,SUM(SaleAmount) SaleAmount,--CurrencyRate rate,
                             SUM(CurrencyAmount) AznAmount 
