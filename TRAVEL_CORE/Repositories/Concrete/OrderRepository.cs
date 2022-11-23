@@ -360,7 +360,8 @@ namespace TRAVEL_CORE.Repositories.Concrete
                     new SqlParameter("SaleAmount", cost.SaleAmount),
                     new SqlParameter("Currency", cost.Currency),
                     new SqlParameter("CurrencyRate", Math.Round(cost.CurrencyRate,4)),
-                    new SqlParameter("CurrencyAmount", cost.CurrencyAmount)
+                    new SqlParameter("CurrencyAmount", cost.CurrencyAmount),
+                    new SqlParameter("Status", cost.Status)
                 };
 
                 connection.Execute(tableName: "OPR.ServicesCost", operation: OperationType.Insert, parameters: costParameters);
@@ -521,7 +522,6 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 List<int> specialList = new();
                 while(speciallinesReader.Read())
                 {
-                    var djdjd = Convert.ToInt32(speciallinesReader["ServicesId"]);
                     specialList.Add(Convert.ToInt32(speciallinesReader["ServicesId"]));
                 }
                 personDetailsById.SpecialServices = specialList;
@@ -633,7 +633,16 @@ namespace TRAVEL_CORE.Repositories.Concrete
             return new ResponseModel { Message = CommonTools.GetMessage((int)MessageCodes.Save), Status = true, Data = null };
         }
 
+        public List<int> GetBookingData()
+        {
+            List<int>? orderIds = new();
 
+            var reader = connection.RunQuery(commandText: "CRD.SP_GetBookingData", commandType: CommandType.StoredProcedure);
+            while (reader.Read())
+                orderIds.Add(Convert.ToInt32(reader["OrderId"]));
+
+            return orderIds;
+        }
 
     }
 }

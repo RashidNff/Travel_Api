@@ -134,7 +134,6 @@ namespace TRAVEL_CORE.Controllers
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns></returns>
-        [AllowAnonymous]
         [HttpGet]
         public IActionResult GetOrderCostsById(int orderId)
         {
@@ -148,7 +147,6 @@ namespace TRAVEL_CORE.Controllers
             }
         }
 
-        [AllowAnonymous]
         [HttpPost]
         public IActionResult SaveOrderCosts(List<OrderCosts> costs, int orderId)
         {
@@ -166,6 +164,19 @@ namespace TRAVEL_CORE.Controllers
             return Ok(model);
         }
 
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult GetBookingData()
+        {
+            try
+            {
+                return Ok(_orderRepository.GetBookingData());
+            }
+            catch (Exception)
+            {
+                return BadRequest(new { message = "Unexpected error occurred!" });
+            }
+        }
 
     }
 }
