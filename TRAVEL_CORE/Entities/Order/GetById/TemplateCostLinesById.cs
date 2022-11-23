@@ -2,7 +2,7 @@
 {
     public class TemplateCostLinesById
     {
-        public int? VenderId { get; set; }
+        public int? Vender { get; set; }
         public int VenderService { get; set; }
         public int Qty { get; set; }
         public float VenderUnitPrice { get; set; }
