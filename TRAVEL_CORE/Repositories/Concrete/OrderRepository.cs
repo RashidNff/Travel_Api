@@ -347,7 +347,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 List<SqlParameter> costParameters = new List<SqlParameter>
                 {
                     new SqlParameter("OrderId", orderId),
-                    new SqlParameter("Vender", cost.Vender),
+                    new SqlParameter("Vender", cost.VenderId),
                     new SqlParameter("VenderService", cost.VenderService),
                     new SqlParameter("Qty", cost.Qty),
                     new SqlParameter("VenderUnitPrice", cost.VenderUnitPrice),
@@ -602,7 +602,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 List<SqlParameter> Parameters = new List<SqlParameter>
                 {
                     new SqlParameter("OrderId", cost.OrderId),
-                    new SqlParameter("Vender", cost.Vender),
+                    new SqlParameter("Vender", cost.VenderId),
                     new SqlParameter("VenderService", cost.VenderService),
                     new SqlParameter("Qty", cost.Qty),
                     new SqlParameter("VenderUnitPrice", cost.VenderUnitPrice),
