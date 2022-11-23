@@ -4,7 +4,6 @@
     {
         public string? VenderId { get; set; }
         public int VenderService { get; set; }
-        public string? VenderServiceName { get; set; }
         public int Qty { get; set; }
         public float VenderUnitPrice { get; set; }
         public decimal VenderAmount { get; set; }
