@@ -68,7 +68,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                             Left Join  (SELECT OperationId,COUNT(*) PCOUNT FROM CRD.OrderPerson WHERE OperationType=2 GROUP BY OperationId) P ON p.OperationId = H.Id 
                             Left Join  (SELECT OrderId,SUM(SaleAmount) SaleAmount,--CurrencyRate rate,
                             SUM(CurrencyAmount) AznAmount 
-                            FROM OPR.ServicesCost  GROUP BY OrderId --,CurrencyRate
+                            FROM OPR.ServicesCost where Status = 1  GROUP BY OrderId --,CurrencyRate
                             ) SC ON SC.OrderId = Ord.Id 
                             WHERE Orderdate between @FromDate and @ToDate {stringFilter}
                             Order by Ord.ID desc";
@@ -96,7 +96,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                             Left Join  (SELECT OperationId,COUNT(*) PCOUNT FROM CRD.OrderPerson WHERE OperationType=2 GROUP BY OperationId) P ON p.OperationId = H.Id 
                             Left Join  (SELECT OrderId,SUM(SaleAmount) SaleAmount,--CurrencyRate rate,
                             SUM(CurrencyAmount) AznAmount 
-                            FROM OPR.ServicesCost  GROUP BY OrderId --,CurrencyRate
+                            FROM OPR.ServicesCost  where Status = 1  GROUP BY OrderId --,CurrencyRate
                             ) SC ON SC.OrderId = Ord.Id 
                             WHERE Orderdate between @FromDate and @ToDate and Ord.Status = @OrderStatus {stringFilter}
                             Order by Ord.ID desc";
