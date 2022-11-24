@@ -12,5 +12,7 @@
         public int Currency { get; set; }
         public float CurrencyRate { get; set; }
         public decimal CurrencyAmount { get; set; }
+        public bool Status { get; set; }
+
     }
 }
