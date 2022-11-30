@@ -87,7 +87,6 @@ namespace TRAVEL_CORE.Controllers
         /// <param name="firmId"></param>
         /// <returns></returns>
 
-        [AllowAnonymous]
         [HttpGet]
         public IActionResult GetFirmById(int firmId)
         {

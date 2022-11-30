@@ -27,6 +27,12 @@ namespace TRAVEL_CORE.Repositories.Concrete
             return data;
         }
 
+        public DataTable GetContractedFirms()
+        {
+            var data = connection.GetData(commandText: "CRD.SP_GetContractedFirms", commandType: CommandType.StoredProcedure);
+            return data;
+        }
+
         public DataTable GetFirmInfoById(int id)
         {
             List<SqlParameter> parameters = new List<SqlParameter>();

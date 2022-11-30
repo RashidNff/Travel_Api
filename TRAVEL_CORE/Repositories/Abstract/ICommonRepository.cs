@@ -7,6 +7,7 @@ namespace TRAVEL_CORE.Repositories.Abstract
         DataTable GetSpecode(string type);
         DataTable GetTemplateCosts();
         DataTable GetFirms();
+        DataTable GetContractedFirms();
         DataTable GetFirmInfoById(int id);
         DataTable GetPersonInfoByDocNumber(int docType, string docNumber);
         DataTable GetPersonDocNumbers();

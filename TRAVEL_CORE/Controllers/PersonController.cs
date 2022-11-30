@@ -35,7 +35,6 @@ namespace TRAVEL_CORE.Controllers
             }
         }
 
-        [AllowAnonymous]
         [HttpPost]
         public IActionResult SavePerson(PersonData person)
         {
@@ -55,7 +54,6 @@ namespace TRAVEL_CORE.Controllers
             return Ok(model);
         }
 
-        [AllowAnonymous]
         /// <summary>
         /// Send person ID to get data
         /// </summary>

@@ -42,7 +42,6 @@ namespace TRAVEL_CORE.Controllers
             }
         }
 
-        [AllowAnonymous]
         [HttpPost]
         public IActionResult SaveOrder(SaveOrder order)
         {
@@ -62,7 +61,6 @@ namespace TRAVEL_CORE.Controllers
 
             return Ok(model);
         }
-        [AllowAnonymous]
         [HttpGet]
         public IActionResult GetOrderById(int orderId)
         {
@@ -164,7 +162,6 @@ namespace TRAVEL_CORE.Controllers
             return Ok(model);
         }
 
-        [AllowAnonymous]
         [HttpGet]
         public IActionResult GetBookingData()
         {

@@ -95,6 +95,23 @@ namespace TRAVEL_CORE.Controllers
         }
 
         /// <summary>
+        /// Get contracted Firms Id And Text
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult GetContractedFirms()
+        {
+            try
+            {
+                return Ok(JsonConvert.SerializeObject(_commonRepository.GetContractedFirms()));
+            }
+            catch (Exception)
+            {
+                return BadRequest(new { message = "Unexpected error occurred!" });
+            }
+        }
+
+        /// <summary>
         /// Send Firm Id to get Firm Info
         /// </summary>
         /// <returns></returns>

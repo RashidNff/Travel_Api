@@ -26,6 +26,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
             return data;
         }
 
+
         public DataTable GetExpences(int templateCostId)
         {
             List<SqlParameter> Parameters = new List<SqlParameter>();
