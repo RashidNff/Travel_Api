@@ -168,7 +168,7 @@ namespace TRAVEL_CORE.Repositories.Concrete
                     new SqlParameter("FromPoint", airwayModel.FromPointId),
                     new SqlParameter("ToPoint", airwayModel.ToPointId),
                     new SqlParameter("DepartureDate", airwayModel.DepartureDate),
-                    new SqlParameter("ReturnDate", airwayModel.ReturnDate),
+                    new SqlParameter("ReturnDate", airwayModel.ReturnDate?.ToString("yyyy-MM-dd HH:mm") ?? String.Empty),
                     new SqlParameter("FlightClassId", airwayModel.FlightClassId),
                     new SqlParameter("PassengersCount", airwayModel.PassengersCount),
                     new SqlParameter("Bron", airwayModel.Bron),
@@ -404,12 +404,14 @@ namespace TRAVEL_CORE.Repositories.Concrete
                 airwayInfo.ToPointId = Convert.ToInt32(readerAir["ToPointId"]);
                 airwayInfo.ToPointName = readerAir["ToPointName"].ToString();
                 airwayInfo.DepartureDate = Convert.ToDateTime(readerAir["DepartureDate"].ToString(), CultureInfo.CreateSpecificCulture("en-GB"));
-                airwayInfo.ReturnDate = Convert.ToDateTime(readerAir["ReturnDate"].ToString(), CultureInfo.CreateSpecificCulture("en-GB"));
                 airwayInfo.FlightClassId = Convert.ToInt32(readerAir["FlightClassId"].ToString());
                 airwayInfo.PassengersCount = Convert.ToInt32(readerAir["PassengersCount"].ToString());
                 airwayInfo.Bron = Convert.ToBoolean(readerAir["Bron"].ToString());
 
-
+                if (readerAir["ReturnDate"].ToString() != "")
+                {
+                    airwayInfo.ReturnDate = Convert.ToDateTime(readerAir["ReturnDate"].ToString(), CultureInfo.CreateSpecificCulture("en-GB"));
+                }
                 if (readerAir["BronExpiryDate"].ToString() != "")
                 {
                     airwayInfo.BronExpiryDate = Convert.ToDateTime(readerAir["BronExpiryDate"], CultureInfo.CreateSpecificCulture("en-GB"));
